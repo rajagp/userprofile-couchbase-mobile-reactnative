@@ -1,5 +1,5 @@
 # Overview
-Example of a simple React Native app that uses Couchbase Lite as embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
+Example of a simple React Native app on Android that uses Couchbase Lite as embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
 The app uses a reference implementation of React Native Module that exposes a subset of couchbase lite APIs.
 
 # Folder Overview
