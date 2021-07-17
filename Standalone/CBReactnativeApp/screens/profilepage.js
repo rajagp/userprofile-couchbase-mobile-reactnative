@@ -56,16 +56,16 @@ export default class Profile extends React.Component {
 
         CouchbaseNativeModule.GetProfile((error, result) => {
 
-            //  console.log(result);
+              console.log("asd"+result);
             var userobj = JSON.parse(result);
-
-            this.setState({
-                email: userobj.email,
-                name: userobj.name,
-                address: userobj.address,
-                imageData: userobj.imageData,
-            });
-
+            if (result!=null) {
+                this.setState({
+                    email: userobj.email,
+                    name: userobj.name,
+                    address: userobj.address,
+                    imageData: userobj.imageData,
+                });
+            }
         });
 
 
