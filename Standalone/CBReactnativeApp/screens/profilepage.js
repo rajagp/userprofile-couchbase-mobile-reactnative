@@ -11,6 +11,7 @@ const options = {
         skipBackup: true,
         path: 'images',
     },
+    includeBase64: true
 };
 
 
@@ -52,18 +53,42 @@ export default class Profile extends React.Component {
 
     componentDidMount = () => {
 
+        //Fetchs profile data from Native module
+         // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
+        
+         let docargs={
+            dbname : "userprofile",
+            docid : "UniqueXYZ"
+        }
 
+        CouchbaseNativeModule.getDocument(JSON.stringify(docargs),(error, result) => {
 
-        CouchbaseNativeModule.GetProfile((error, result) => {
+           
+           
+            if (result!=null&&result!="Document is null") {
+                var userobj = JSON.parse(result);
 
-              console.log("asd"+result);
-            var userobj = JSON.parse(result);
-            if (result!=null) {
+                if(userobj.image)
+                CouchbaseNativeModule.getBlob(userobj.image,(error,ImageBlob)=>{
+   
+                   
+                   console.log(userobj.image);
+                   const encodedBase64 = ImageBlob;
+
+                   let imageuri = {uri: `data:${userobj.image.content_type};base64,${encodedBase64}`}
+                    this.setState({
+                        email: userobj.email,
+                        name: userobj.name,
+                        address: userobj.address,
+                        imagepath: imageuri,
+                        });
+
+                });
+                else
                 this.setState({
                     email: userobj.email,
                     name: userobj.name,
                     address: userobj.address,
-                    imageData: userobj.imageData,
                 });
             }
         });
@@ -85,10 +110,15 @@ export default class Profile extends React.Component {
             } else {
                 const source = { uri: response.assets[0].uri };
 
+                let image = response.assets[0].base64;
+                let _imagetype = response.assets[0].type;
+              //  console.log(image,imagetype)
                 // You can also display the image using data:
 
                 this.setState({
                     imagepath: source,
+                    imagedata:image,
+                    imagetype:_imagetype,
                 });
 
             }
@@ -99,21 +129,72 @@ export default class Profile extends React.Component {
     _saveProfile = () => {
 
 
-        var userobj = {
-            email: this.state.email,
-            name: this.state.name,
-            address: this.state.address,
-            imageData: this.state.imagepath,
-        };
+        if(this.state.imagedata)
+        {
+         let blob = CouchbaseNativeModule.setBlob(this.state.imagetype,this.state.imagedata);
+      
+            if(blob.length){
+               
+                var _data = {
+                    email: this.state.email,
+                    name: this.state.name,
+                    address: this.state.address,
+                    image : blob
+                };
 
-        CouchbaseNativeModule.SetProfile(JSON.stringify(userobj), (error, result) => {
-            console.log(result);
-        });
+
+                var docargs = {
+                    dbName : "userprofile",
+                    data : _data,
+                    docid : "UniqueXYZ"
+                }
+
+                CouchbaseNativeModule.setDocument(JSON.stringify(docargs),(error, result) => {
+                   
+                   if(!error) alert(result);
+                 
+                });
+
+            }
+            
+        
+        }
+        else{
+            var _data = {
+                email: this.state.email,
+                name: this.state.name,
+                address: this.state.address,
+            };
+
+
+            var docargs = {
+                dbName : "userprofile",
+                data : _data,
+                docid : "UniqueXYZ"
+            }
+
+            CouchbaseNativeModule.setDocument(JSON.stringify(docargs), (error, result) => {
+               
+                if(!error) alert(result);
+             
+            });
+        }
+
+
     }
 
     async _logout() {
 
+        let dbargs = {
+            directory:'/'+this.state.username,
+            dbName :'userprofile',
+         }
+
+        CouchbaseNativeModule.closeDatabase(dbargs.toString(), (error, result) => {
+            this.props.navigation.goBack();
+        });
     }
+
     render() {
         var { navigate } = this.props.navigation;
         const { showAlertTwo, showAlert } = this.state;
