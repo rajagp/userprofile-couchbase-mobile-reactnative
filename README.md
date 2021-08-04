@@ -31,7 +31,7 @@ First you will need to download [Couchabse Lite Native Module] (https://github.c
 7. Now you can connect your phone or run an emulator and then run the project by follwoing command in terminal `react-native run-android`.
 
 ## Pre-requisites
-TBD
+* NPM and Yarn command line must be installed globally into the system.
 
 ##  Build & Run
 TBD
