@@ -56,12 +56,10 @@ export default class Profile extends React.Component {
         //Fetchs profile data from Native module
          // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
         
-         let docargs={
-            dbname : "userprofile",
-            docid : "UniqueXYZ"
-        }
-
-        CouchbaseNativeModule.getDocument(JSON.stringify(docargs),(error, result) => {
+           let dbname = "userprofile";
+           let docid = "UniqueXYZ";
+        
+        CouchbaseNativeModule.getDocument(dbname,docid,(error, result) => {
 
            
            
@@ -143,13 +141,13 @@ export default class Profile extends React.Component {
                 };
 
 
-                var docargs = {
-                    dbName : "userprofile",
-                    data : _data,
-                    docid : "UniqueXYZ"
-                }
+               
+                  let  dbName = "userprofile";
+                  let  data = _data;
+                  let  docid = "UniqueXYZ";
+                
 
-                CouchbaseNativeModule.setDocument(JSON.stringify(docargs),(error, result) => {
+                CouchbaseNativeModule.setDocument(dbName,docid,data,(error, result) => {
                    
                    if(!error) alert(result);
                  

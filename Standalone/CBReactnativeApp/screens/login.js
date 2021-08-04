@@ -48,16 +48,13 @@ export default class Login extends React.Component {
 
            // CouchbaseNativeModule.init();
            
-            let dbargs = {
-                Directory:RNFS.DocumentDirectoryPath+"/"+this.state.username,
-                dbName :'userprofile',
-             }
-
-             console.log(dbargs);
-            CouchbaseNativeModule.createDatabase(JSON.stringify(dbargs),(error,respose)=>{
-
+              let  Directory = RNFS.DocumentDirectoryPath+"/"+this.state.username;
+              let dbName = 'userprofile';
              
-                if (!error&&respose=="Database Created.") {
+
+            CouchbaseNativeModule.createDatabase(dbName,Directory,null,(error,respose)=>{
+
+                if (!error&&respose=="Database Created") {
 
                     this.props.navigation.navigate('profilescreen', {});
                 
@@ -103,10 +100,7 @@ export default class Login extends React.Component {
                         accessibilityLabel="Learn more about this purple button"
                     />
 
-
                 </View>
-
-
 
 
             </SafeAreaView>
