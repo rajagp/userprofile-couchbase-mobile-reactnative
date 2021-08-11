@@ -42,28 +42,39 @@ export default class Login extends React.Component {
     }
 
 
+    success_callback = (SuccessResponse) => {
+
+        if (SuccessResponse=="Database Created") {
+
+            this.props.navigation.navigate('profilescreen', {username:this.state.username});
+        
+        }
+        else {
+            alert("There was a problem while login.");
+        }
+    }
+
+
+    error_callback = (ErrorResponse) => {
+       
+            alert("There was a problem while login : "+ErrorResponse);
+ 
+    }
+
+
     async _userLogin() {
 
         if ((this.state.username) && (this.state.password)) {
 
            // CouchbaseNativeModule.init();
            
-              let  Directory = RNFS.DocumentDirectoryPath+"/"+this.state.username;
+              let  _directory = RNFS.DocumentDirectoryPath+"/"+this.state.username;
               let dbName = 'userprofile';
-             
+             let config = {
+                Directory : _directory,
+             }
 
-            CouchbaseNativeModule.createDatabase(dbName,Directory,null,(error,respose)=>{
-
-                if (!error&&respose=="Database Created") {
-
-                    this.props.navigation.navigate('profilescreen', {});
-                
-                }
-                else {
-                    alert("There was a problem while login.");
-                }
-
-            });
+            CouchbaseNativeModule.createDatabase(dbName,config,this.success_callback,this.error_callback);
         }
         else {
             alert("Please enter Username and Password.");

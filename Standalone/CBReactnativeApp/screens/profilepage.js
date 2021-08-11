@@ -22,7 +22,6 @@ export default class Profile extends React.Component {
     static navigationOptions = {
         headerShown: true
     };
-
     state = {
         loaded: false,
         showpass: false,
@@ -51,47 +50,55 @@ export default class Profile extends React.Component {
     };
 
 
+    getDocument_success_callback = (SuccessResponse) => {
+        
+        let result = SuccessResponse;
+         console.log(result.name);
+        if (result!=null&&result!="Document is null") {
+            var userobj = JSON.parse(result);
+
+            if(userobj.image)
+            CouchbaseNativeModule.getBlob(userobj.image,(error,ImageBlob)=>{
+               console.log(userobj.image);
+               const encodedBase64 = ImageBlob;
+
+               let imageuri = {uri: `data:${userobj.image.content_type};base64,${encodedBase64}`}
+                this.setState({
+                  
+                    name: userobj.name,
+                    address: userobj.address,
+                    imagepath: imageuri,
+                    });
+
+            });
+            else
+            this.setState({
+               
+                name: userobj.name,
+                address: userobj.address,
+            });
+        }
+    }
+
+
+    getDocument_error_callback = (ErrorResponse) => {
+       
+        alert("There was a problem while login : "+ErrorResponse);
+
+    }
+
+
     componentDidMount = () => {
 
         //Fetchs profile data from Native module
-         // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
+        // {"dbname":"mydb" , "docid":"12312-sae12-31", "data":{"email":"abc@gmail.com","name":"Abc"}}
         
            let dbname = "userprofile";
            let docid = "UniqueXYZ";
+
+        this.setState({email:this.props.navigation.state.params.username})
         
-        CouchbaseNativeModule.getDocument(dbname,docid,(error, result) => {
-
-           
-           
-            if (result!=null&&result!="Document is null") {
-                var userobj = JSON.parse(result);
-
-                if(userobj.image)
-                CouchbaseNativeModule.getBlob(userobj.image,(error,ImageBlob)=>{
-   
-                   
-                   console.log(userobj.image);
-                   const encodedBase64 = ImageBlob;
-
-                   let imageuri = {uri: `data:${userobj.image.content_type};base64,${encodedBase64}`}
-                    this.setState({
-                        email: userobj.email,
-                        name: userobj.name,
-                        address: userobj.address,
-                        imagepath: imageuri,
-                        });
-
-                });
-                else
-                this.setState({
-                    email: userobj.email,
-                    name: userobj.name,
-                    address: userobj.address,
-                });
-            }
-        });
-
-
+        CouchbaseNativeModule.getDocument(dbname,docid,this.getDocument_success_callback,this.getDocument_error_callback);
 
     }
 
@@ -134,7 +141,6 @@ export default class Profile extends React.Component {
             if(blob.length){
                
                 var _data = {
-                    email: this.state.email,
                     name: this.state.name,
                     address: this.state.address,
                     image : blob
@@ -147,11 +153,7 @@ export default class Profile extends React.Component {
                   let  docid = "UniqueXYZ";
                 
 
-                CouchbaseNativeModule.setDocument(dbName,docid,data,(error, result) => {
-                   
-                   if(!error) alert(result);
-                 
-                });
+                CouchbaseNativeModule.setDocument(dbName,docid,JSON.stringify(data),(result) => {alert(result);},(error) => {alert(error);});
 
             }
             
@@ -159,23 +161,19 @@ export default class Profile extends React.Component {
         }
         else{
             var _data = {
-                email: this.state.email,
                 name: this.state.name,
                 address: this.state.address,
             };
 
 
-            var docargs = {
-                dbName : "userprofile",
-                data : _data,
-                docid : "UniqueXYZ"
-            }
+           
+            let  dbName = "userprofile";
+            let  data = _data;
+            let  docid = "UniqueXYZ";
+          
 
-            CouchbaseNativeModule.setDocument(JSON.stringify(docargs), (error, result) => {
-               
-                if(!error) alert(result);
-             
-            });
+          CouchbaseNativeModule.setDocument(dbName,docid,JSON.stringify(data),(result) => {alert(result);},(error) => {alert(error);});
+
         }
 
 
@@ -183,14 +181,12 @@ export default class Profile extends React.Component {
 
     async _logout() {
 
-        let dbargs = {
-            directory:'/'+this.state.username,
-            dbName :'userprofile',
-         }
+       let close = CouchbaseNativeModule.closeDatabase('userprofile');
 
-        CouchbaseNativeModule.closeDatabase(dbargs.toString(), (error, result) => {
-            this.props.navigation.goBack();
-        });
+        console.log(close);
+      
+        goBack();
+  
     }
 
     render() {
@@ -219,7 +215,7 @@ export default class Profile extends React.Component {
 
                     <View>
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
-                        <TextInput placeholder="Email" keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
+                        <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
                     </View>
 
