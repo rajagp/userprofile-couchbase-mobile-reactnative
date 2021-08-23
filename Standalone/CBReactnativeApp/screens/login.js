@@ -1,8 +1,7 @@
 import React from 'react';
-import { SafeAreaView, StatusBar, Text, View, Keyboard, Button, ImageBackground, Image, TextInput, TouchableOpacity, ScrollView, PermissionsAndroid } from 'react-native';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { SafeAreaView, StatusBar, View, Button, Image, TextInput } from 'react-native';
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite-android';
+import CbliteAndroid from 'react-native-cblite';
 import * as RNFS from 'react-native-fs';
 
 const CouchbaseNativeModule = CbliteAndroid;
@@ -21,33 +20,15 @@ export default class Login extends React.Component {
         super(props);
     }
 
-    showAlert = () => {
-        this.setState({
-            showAlert: true,
-            showAlertTwo: false
-        });
-    };
-
-    hideAlert = () => {
-        this.setState({
-            showAlert: false
-        });
-    };
-
-
-    componentDidMount = () => {
-
-
-
-    }
-
 
     success_callback = (SuccessResponse) => {
 
-        if (SuccessResponse=="Database Created") {
+        console.log(SuccessResponse);
 
-            this.props.navigation.navigate('profilescreen', {username:this.state.username});
-        
+        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+
+            this.props.navigation.navigate('profilescreen', { username: this.state.username });
+
         }
         else {
             alert("There was a problem while login.");
@@ -56,25 +37,23 @@ export default class Login extends React.Component {
 
 
     error_callback = (ErrorResponse) => {
-       
-            alert("There was a problem while login : "+ErrorResponse);
- 
+        console.log(ErrorResponse);
+        alert("There was a problem while login : " + ErrorResponse);
+
     }
 
 
-    async _userLogin() {
+    async user_Login() {
 
         if ((this.state.username) && (this.state.password)) {
 
-           // CouchbaseNativeModule.init();
-           
-              let  _directory = RNFS.DocumentDirectoryPath+"/"+this.state.username;
-              let dbName = 'userprofile';
-             let config = {
-                Directory : _directory,
-             }
+            let _directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
+            let dbName = 'userprofile';
+            let config = {
+                Directory: _directory,
+            }
 
-            CouchbaseNativeModule.createDatabase(dbName,config,this.success_callback,this.error_callback);
+            CouchbaseNativeModule.createDatabase(dbName, config, this.success_callback, this.error_callback);
         }
         else {
             alert("Please enter Username and Password.");
@@ -83,8 +62,6 @@ export default class Login extends React.Component {
 
 
     render() {
-        var { navigate } = this.props.navigation;
-        const { showAlertTwo, showAlert } = this.state;
 
         return (
 
@@ -95,7 +72,7 @@ export default class Login extends React.Component {
                 <View style={whole.verticalLinearLayout}>
 
                     <View style={whole.main} >
-                        <Image style={{ width: wp('50%'), height: 120, marginTop: hp('10%'), resizeMode: 'center' }} source={require('../assets/img/logo.png')}></Image>
+                        <Image style={whole.logoImage} source={require('../assets/img/logo.png')}></Image>
                     </View>
 
                     <View>
@@ -107,7 +84,7 @@ export default class Login extends React.Component {
                         title="Sign in"
                         color="#E62125"
                         style={whole.button}
-                        onPress={() => this._userLogin()}
+                        onPress={() => this.user_Login()}
                         accessibilityLabel="Learn more about this purple button"
                     />
 
