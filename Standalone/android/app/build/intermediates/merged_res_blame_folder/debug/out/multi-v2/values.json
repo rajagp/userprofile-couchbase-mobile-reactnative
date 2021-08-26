@@ -1,8 +1,27 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
+            "outputFile": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
+                {
+                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "54",
+                        "endLines": "6",
+                        "endColumns": "12",
+                        "endOffsets": "234"
+                    },
+                    "to": {
+                        "startLines": "365",
+                        "startColumns": "4",
+                        "startOffsets": "25691",
+                        "endLines": "368",
+                        "endColumns": "12",
+                        "endOffsets": "25871"
+                    }
+                },
                 {
                     "source": "/Users/ramiz/.gradle/caches/transforms-2/files-2.1/baebfc24ee3e9d675a4614c1f27f118a/jetified-appcompat-resources-1.1.0/res/values/values.xml",
                     "from": {
@@ -39,23 +58,6 @@
                         "endLines": "15,16,53,54,153,154,155,156,157,158,159,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,192,193,194,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,240,241,246,247,248,249,250,251,252,253,254,255,256,266,347,1729,1733,1734,1738,1739,1922,1923,2655,2744,2776,2952,2959",
                         "endColumns": "71,87,68,62,69,67,71,69,60,73,72,60,60,61,63,61,60,67,99,59,65,72,68,56,51,61,71,75,64,58,58,59,59,59,59,59,59,59,59,59,59,58,59,59,59,59,59,59,59,59,59,59,58,59,59,58,58,58,58,58,58,34,34,54,62,54,57,56,49,60,56,33,34,34,69,70,116,12,109,12,128,71,66,24,24,24,24,24",
                         "endOffsets": "1031,1119,3627,3690,10478,10546,10618,10688,10749,10823,10896,11741,11802,11864,11928,11990,12051,12119,12219,12279,12345,12418,12487,12544,12596,12658,13183,13259,13324,13434,13493,13553,13613,13673,13733,13793,13853,13913,13973,14033,14093,14152,14212,14272,14332,14392,14452,14512,14572,14632,14692,14752,14811,14871,14931,14990,15049,15108,15167,15226,15285,15928,15963,16203,16266,16321,16379,16436,16486,16547,16604,16638,16673,16708,17288,24442,117488,117689,117799,118000,118129,131743,131810,171388,176837,178902,186687,187064"
-                    }
-                },
-                {
-                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/res/values/strings.xml",
-                    "from": {
-                        "startLines": "1",
-                        "startColumns": "4",
-                        "startOffsets": "16",
-                        "endColumns": "53",
-                        "endOffsets": "65"
-                    },
-                    "to": {
-                        "startLines": "295",
-                        "startColumns": "4",
-                        "startOffsets": "19232",
-                        "endColumns": "53",
-                        "endOffsets": "19281"
                     }
                 },
                 {
@@ -114,7 +116,7 @@
                     }
                 },
                 {
-                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/build/generated/res/resValues/debug/values/gradleResValues.xml",
+                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/build/generated/res/resValues/debug/values/gradleResValues.xml",
                     "from": {
                         "startLines": "6,8",
                         "startColumns": "4,4",
@@ -131,22 +133,20 @@
                     }
                 },
                 {
-                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/res/values/styles.xml",
+                    "source": "/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/res/values/strings.xml",
                     "from": {
-                        "startLines": "3",
+                        "startLines": "1",
                         "startColumns": "4",
-                        "startOffsets": "54",
-                        "endLines": "6",
-                        "endColumns": "12",
-                        "endOffsets": "234"
+                        "startOffsets": "16",
+                        "endColumns": "53",
+                        "endOffsets": "65"
                     },
                     "to": {
-                        "startLines": "365",
+                        "startLines": "295",
                         "startColumns": "4",
-                        "startOffsets": "25691",
-                        "endLines": "368",
-                        "endColumns": "12",
-                        "endOffsets": "25871"
+                        "startOffsets": "19232",
+                        "endColumns": "53",
+                        "endOffsets": "19281"
                     }
                 },
                 {

@@ -66,5 +66,15 @@
       <option name="name" value="maven" />
       <option name="url" value="file:$PROJECT_DIR$/../../../../../CB%20Android%20React%20App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native/android/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven" />
+      <option name="name" value="maven" />
+      <option name="url" value="file:$PROJECT_DIR$/../../../../CB%20Android%20React%20App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native/android/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven2" />
+      <option name="name" value="maven2" />
+      <option name="url" value="file:$PROJECT_DIR$/../../../../CB%20Android%20React%20App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/jsc-android/dist/" />
+    </remote-repository>
   </component>
 </project>

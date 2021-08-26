@@ -1,6 +1,0 @@
-module Pods_CBReactnativeApp_CBReactnativeAppTests {
-  umbrella header "Pods-CBReactnativeApp-CBReactnativeAppTests-umbrella.h"
-
-  export *
-  module * { export * }
-}

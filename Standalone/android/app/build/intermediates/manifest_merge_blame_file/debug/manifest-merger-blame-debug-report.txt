@@ -9,96 +9,90 @@
 9        android:targetSdkVersion="29" />
 10
 11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-11-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/debug/AndroidManifest.xml:5:5-77
-11-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/debug/AndroidManifest.xml:5:22-75
+11-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/debug/AndroidManifest.xml:5:5-77
+11-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/debug/AndroidManifest.xml:5:22-75
 12    <uses-permission android:name="android.permission.INTERNET" />
-12-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:4:5-67
-12-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:4:22-64
+12-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:4:5-67
+12-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:4:22-64
 13    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-13-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:5:5-71
-13-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:5:22-68
+13-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:5:5-71
+13-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:5:22-68
 14    <uses-permission android:name="android.permission.READ_PROFILE" />
-14-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:6:5-71
-14-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:6:22-68
+14-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:6:5-71
+14-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:6:22-68
 15    <uses-permission android:name="android.permission.READ_CONTACTS" />
-15-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:7:5-72
-15-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:7:22-69
+15-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:7:5-72
+15-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:7:22-69
 16    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 16-->[com.facebook.flipper:flipper:0.75.1] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/a8f6015f96666ab8d93bfe5b64998bc8/jetified-flipper-0.75.1/AndroidManifest.xml:16:5-76
 16-->[com.facebook.flipper:flipper:0.75.1] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/a8f6015f96666ab8d93bfe5b64998bc8/jetified-flipper-0.75.1/AndroidManifest.xml:16:22-73
 17    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-17-->[:react-native-fs] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
-17-->[:react-native-fs] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:22-78
-18    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-18-->[:couchbase-lite-android-ee-3.0.0:] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/de36399fc2611a4b07d3e03bf80f1843/jetified-couchbase-lite-android-ee-3.0.0/AndroidManifest.xml:27:5-79
-18-->[:couchbase-lite-android-ee-3.0.0:] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/de36399fc2611a4b07d3e03bf80f1843/jetified-couchbase-lite-android-ee-3.0.0/AndroidManifest.xml:27:22-76
-19    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-19-->[:couchbase-lite-android-ee-3.0.0:] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/de36399fc2611a4b07d3e03bf80f1843/jetified-couchbase-lite-android-ee-3.0.0/AndroidManifest.xml:29:5-80
-19-->[:couchbase-lite-android-ee-3.0.0:] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/de36399fc2611a4b07d3e03bf80f1843/jetified-couchbase-lite-android-ee-3.0.0/AndroidManifest.xml:29:22-77
-20
-21    <application
-21-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:9:5-27:19
-22        android:name="com.cbreactnativeapp.MainApplication"
-22-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:10:7-38
-23        android:allowBackup="false"
-23-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:14:7-34
-24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-24-->[androidx.core:core:1.3.1] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/3975ffd70914deb17405b14313b8e4ba/core-1.3.1/AndroidManifest.xml:24:18-86
-25        android:debuggable="true"
-26        android:icon="@mipmap/ic_launcher"
-26-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:12:7-41
-27        android:label="@string/app_name"
-27-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:11:7-39
-28        android:roundIcon="@mipmap/ic_launcher_round"
-28-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:13:7-52
-29        android:theme="@style/AppTheme"
-29-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:15:7-38
-30        android:usesCleartextTraffic="true" >
-30-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/debug/AndroidManifest.xml:8:9-44
-31        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
-31-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/debug/AndroidManifest.xml:11:9-86
-31-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/debug/AndroidManifest.xml:11:19-83
-32        <activity
-32-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:16:7-26:18
-33            android:name="com.cbreactnativeapp.MainActivity"
-33-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:17:9-37
-34            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
-34-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:19:9-86
-35            android:label="@string/app_name"
-35-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:18:9-41
-36            android:launchMode="singleTask"
-36-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:20:9-40
-37            android:windowSoftInputMode="adjustResize" >
-37-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:21:9-51
-38            <intent-filter>
-38-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:22:9-25:25
-39                <action android:name="android.intent.action.MAIN" />
-39-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:23:13-65
-39-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:23:21-62
-40
-41                <category android:name="android.intent.category.LAUNCHER" />
-41-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:24:13-73
-41-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/android/app/src/main/AndroidManifest.xml:24:23-70
-42            </intent-filter>
-43        </activity>
-44
-45        <provider
-45-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:9-20:20
-46            android:name="com.imagepicker.ImagePickerProvider"
-46-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-63
-47            android:authorities="com.cbreactnativeapp.imagepickerprovider"
-47-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-71
-48            android:exported="false"
-48-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:13-37
-49            android:grantUriPermissions="true" >
-49-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:13-47
-50            <meta-data
-50-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:13-19:70
-51                android:name="android.support.FILE_PROVIDER_PATHS"
-51-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:17-67
-52                android:resource="@xml/imagepicker_provider_paths" />
-52-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/CBReactnativeApp/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:19:17-67
-53        </provider>
-54    </application>
-55
-56</manifest>
+17-->[:react-native-fs] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:5-81
+17-->[:react-native-fs] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-fs/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:11:22-78
+18
+19    <application
+19-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:9:5-27:19
+20        android:name="com.cbreactnativeapp.MainApplication"
+20-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:10:7-38
+21        android:allowBackup="false"
+21-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:14:7-34
+22        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+22-->[androidx.core:core:1.3.1] /Users/ramiz/.gradle/caches/transforms-2/files-2.1/3975ffd70914deb17405b14313b8e4ba/core-1.3.1/AndroidManifest.xml:24:18-86
+23        android:debuggable="true"
+24        android:icon="@mipmap/ic_launcher"
+24-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:12:7-41
+25        android:label="@string/app_name"
+25-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:11:7-39
+26        android:roundIcon="@mipmap/ic_launcher_round"
+26-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:13:7-52
+27        android:theme="@style/AppTheme"
+27-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:15:7-38
+28        android:usesCleartextTraffic="true" >
+28-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/debug/AndroidManifest.xml:8:9-44
+29        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+29-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/debug/AndroidManifest.xml:11:9-86
+29-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/debug/AndroidManifest.xml:11:19-83
+30        <activity
+30-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:16:7-26:18
+31            android:name="com.cbreactnativeapp.MainActivity"
+31-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:17:9-37
+32            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
+32-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:19:9-86
+33            android:label="@string/app_name"
+33-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:18:9-41
+34            android:launchMode="singleTask"
+34-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:20:9-40
+35            android:windowSoftInputMode="adjustResize" >
+35-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:21:9-51
+36            <intent-filter>
+36-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:22:9-25:25
+37                <action android:name="android.intent.action.MAIN" />
+37-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:23:13-65
+37-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:23:21-62
+38
+39                <category android:name="android.intent.category.LAUNCHER" />
+39-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:24:13-73
+39-->/Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/android/app/src/main/AndroidManifest.xml:24:23-70
+40            </intent-filter>
+41        </activity>
+42
+43        <provider
+43-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:12:9-20:20
+44            android:name="com.imagepicker.ImagePickerProvider"
+44-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:13:13-63
+45            android:authorities="com.cbreactnativeapp.imagepickerprovider"
+45-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:14:13-71
+46            android:exported="false"
+46-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:15:13-37
+47            android:grantUriPermissions="true" >
+47-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:16:13-47
+48            <meta-data
+48-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:17:13-19:70
+49                android:name="android.support.FILE_PROVIDER_PATHS"
+49-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:18:17-67
+50                android:resource="@xml/imagepicker_provider_paths" />
+50-->[:react-native-image-picker] /Users/ramiz/Desktop/Couchbase/CB Android React App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/react-native-image-picker/android/build/intermediates/library_manifest/debug/AndroidManifest.xml:19:17-67
+51        </provider>
+52    </application>
+53
+54</manifest>
