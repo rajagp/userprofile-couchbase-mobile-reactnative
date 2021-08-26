@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/CBReactnativeApp.iml" filepath="$PROJECT_DIR$/.idea/modules/CBReactnativeApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/CBReactnativeApp.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/CBReactnativeApp.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-273737176/CBReactnativeApp.react-native-cblite.iml" filepath="$PROJECT_DIR$/.idea/modules/-273737176/CBReactnativeApp.react-native-cblite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-145045784/CBReactnativeApp.react-native-fs.iml" filepath="$PROJECT_DIR$/.idea/modules/-145045784/CBReactnativeApp.react-native-fs.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1093626901/CBReactnativeApp.react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/1093626901/CBReactnativeApp.react-native-gesture-handler.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-885289199/CBReactnativeApp.react-native-image-picker.iml" filepath="$PROJECT_DIR$/.idea/modules/-885289199/CBReactnativeApp.react-native-image-picker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-640167106/CBReactnativeApp.react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/-640167106/CBReactnativeApp.react-native-safe-area-context.iml" />
+    </modules>
+  </component>
+</project>
