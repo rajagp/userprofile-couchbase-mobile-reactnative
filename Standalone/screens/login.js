@@ -29,6 +29,8 @@ export default class Login extends React.Component {
 
             this.props.navigation.navigate('profilescreen', { username: this.state.username });
 
+            this.setState({username:null,password:null});
+
         }
         else {
             alert("There was a problem while login.");

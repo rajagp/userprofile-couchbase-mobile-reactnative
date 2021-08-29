@@ -18,14 +18,13 @@ const CouchbaseNativeModule = CbliteAndroid;
 export default class Profile extends React.Component {
 
     static navigationOptions = {
-        headerShown: true
+        headerShown: true,
+     
     };
 
     state = {
         loaded: false,
-        name: '',
-        email: '',
-        address: '',
+        UserObject: {},
         imagepath: require('../assets/img/avatar.png'),
     }
 
@@ -36,38 +35,41 @@ export default class Profile extends React.Component {
     getDocumentOnsuccessCallback = (successResponse) => {
 
         let result = successResponse;
-        console.log(result.name);
+        console.log("getDoc : ", result);
+
+
         if (result != null && result != "Document is null") {
+          
             var userobj = JSON.parse(result);
 
-            if (userobj.image){
-                CouchbaseNativeModule.getBlob(this.state.dbname, userobj.image, (imageBlob) => {
-                   
-                    const encodedBase64 = imageBlob;
+            this.setState({
+                UserObject: userobj,
+                name: userobj.name,
+                address: userobj.address,
+            });
 
+            if (userobj.image) {
+
+                CouchbaseNativeModule.getBlob(this.state.dbname, userobj.image, (imageBlob) => {
+
+                    const encodedBase64 = imageBlob;
                     let imageuri = { uri: `data:${userobj.image.content_type};base64,${encodedBase64}` }
                     this.setState({
-
-                        name: userobj.name,
-                        address: userobj.address,
                         imagepath: imageuri,
                     });
 
                 }, (errorResponse) => {
-                    alert("There was a problem while GET Blob : " + errorResponse);
+                    alert("There was a problem while fetching profile image. Details : " + errorResponse);
                 });
             }
-            else {
-                this.setState({
-                    name: userobj.name,
-                    address: userobj.address,
-                });
-            }
+
         }
     }
 
     getDocumentOnerrorCallback = (errorResponse) => {
-        alert("There was a problem while GET DOCUMENT : " + errorResponse);
+        if (!errorResponse == "Document not found") {
+            alert("There was a problem while fetching the data. Details : " + errorResponse);
+        }
     }
 
     componentDidMount = () => {
@@ -89,18 +91,23 @@ export default class Profile extends React.Component {
         //add listeners
         var jsListner = "DatabaseChangeEvent";
         var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
-        console.log(x);
-        if(x=="Success")
-        {
+        console.log("Add Listner :", x);
+        if (x == "Success") {
             //start listening
             DeviceEventEmitter.addListener(jsListner, this.onDbchange);
-        }    
+        }
 
 
     }
 
     onDbchange = (event) => {
-        console.warn("event", event);
+        if (event.Modified) {
+            var docIds = Object.keys(event.Modified);
+            var docs = Object.values(event.Modified);
+            // console.warn("Event", "Modified");
+            // console.warn("Docid", docIds[0]);
+            // console.warn("Doc", docs[0]);
+        }
     };
 
     selectpicture = () => {
@@ -120,7 +127,6 @@ export default class Profile extends React.Component {
                 let _imagetype = response.assets[0].type;
                 //  console.log(image,imagetype)
                 // You can also display the image using data:
-
                 this.setState({
                     imagepath: source,
                     imagedata: image,
@@ -134,51 +140,53 @@ export default class Profile extends React.Component {
 
     saveProfile = () => {
 
+        var data = this.state.UserObject;
+        data.type = "user";
+        data.name = this.state.name;
+        data.address = this.state.address;
 
         if (this.state.imagedata) {
             let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
-            console.log("blob", blob);
             if (blob.length) {
-
-                var data = {
-                    type: "user",
-                    name: this.state.name,
-                    address: this.state.address,
-                    image: blob
-                };
-
-                CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), (result) => { console.log("setdcSUCESS", result); alert(result); }, (error) => { console.log("setdcERR", error); alert(error); });
+                data.image = blob;
             }
-
-
         }
-        else {
-            var data = {
-                type: "user",
-                name: this.state.name,
-                address: this.state.address,
-            };
-
-            CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), (result) => { alert(result); }, (error) => { alert(error); });
-        }
-
+        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data),this.OnSetDocSuccess,
+        (error) => { alert(error); 
+        });
 
     }
 
-     logout = () => {
+
+    OnSetDocSuccess = (result) => {
+
+        if(result=='Success')
+        {
+            alert('Document saved successfully.');
+        }
+        else
+        {
+            alert('There was a problem while saving the data. Details : '+result);
+        }
+
+    }
+
+
+
+
+    logout = () => {
 
         //remove listners
         var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
         if (removeListnerResponse == "Success") {
-           
-            //stop listeneing
-            DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
-            let close = CouchbaseNativeModule.closeDatabase(this.state.dbname);
-            console.log(close);
-            this.props.navigation.goBack();
-        }
-        console.log(removeListnerResponse);
 
+            //stop listeneing
+             DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
+             let close = CouchbaseNativeModule.closeDatabase(this.state.dbname);
+             this.props.navigation.goBack();
+             
+        }
+ 
 
     }
 

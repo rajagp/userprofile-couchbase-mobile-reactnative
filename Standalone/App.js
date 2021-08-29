@@ -13,7 +13,9 @@ const Navigation = createStackNavigator({
   loginscreen: { screen: Login },
   profilescreen: { screen: Profile , 
     navigationOptions: {
-    headerTitle:'User Profile' 
+    headerTitle:'User Profile' ,
+    headerLeft: ()=> null, // Note: using just `null` instead of a function should also work but could trigger a TS error
+    headerTitleStyle: { alignSelf: 'center' },
   },},
 
 });   

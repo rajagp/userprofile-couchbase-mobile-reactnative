@@ -3,3 +3,5 @@
 Standalone/.DS_Store
 Standalone/node_modules
 Standalone/android/app/libs/couchbase-lite-android-ee-3.0.0.aar
+Standalone/android/.gradle/
+Standalone/android/local.properties
