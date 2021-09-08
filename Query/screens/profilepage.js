@@ -181,7 +181,8 @@ export default class Profile extends React.Component {
 
             //stop listeneing
             DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
-            let close = CouchbaseNativeModule.closeDatabase(this.state.dbname);
+            let closeMainDB = CouchbaseNativeModule.closeDatabase(this.state.dbname);
+            let closeUniDB = CouchbaseNativeModule.closeDatabase('universities');
             this.props.navigation.goBack();
 
         }
