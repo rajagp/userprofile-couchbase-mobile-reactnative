@@ -14,24 +14,158 @@ This version of app extends the "standalone" version of the app and demonstrates
 # sync
 This version of app extends the "query" version of the app and demonstrates basic database sync functionality. The app supports bi-directional sync with a remote Couchbase Server database through a Sync Gateway.
 
-# Build Instructions
-A step by step build guide of React Native Application of User Profile using [Couchabse Lite Native Module] (https://github.com/rajagp/couchbase-lite-react-native-module/tree/Phase1 “Github”) in Android.
 
-
-First you will need to download [Couchabse Lite Native Module] (https://github.com/rajagp/couchbase-lite-react-native-module/tree/Phase1 “Github”) 
-
-## Setup
-1. Open android project in android studio you will be needed to update sdk and jdk path to your current system.
-2. Android Studio will automatically update those setting and will update the indexes.
-3. Once done, **Clean Build**
-4. Then in project directory open terminal and run `npm install`.
-    * This will install node modules into the project folder.
-5. Then run yarn install "\{Couchabse Lite Native Module Package Path\}"
-6. Then clean android build by following commands in terminal `cd android` then `./gradlew clean`.
-7. Now you can connect your phone or run an emulator and then run the project by follwoing command in terminal `react-native run-android`.
+# Getting Started
 
 ## Pre-requisites
-* NPM and Yarn command line must be installed globally into the system.
+* [React Native Development Tools](https://reactnative.dev/docs/environment-setup). 
+    * Install Node v12 or newer. This includes npx.
+* npm v6.14+ (installed globally)
+* yarn version 1.22+ (installed globally)
+* [Android Studio 4.1 or above](https://developer.android.com/studio)
+* Android device or emulator running API level 29 or above
+* Android SDK 29
+* Android Build Tools 29
+* [JDK 8 (min)](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) 
 
-##  Build & Run
-TBD
+
+## Build Instructions
+
+* clone repository
+```
+git clone https://github.com/rajagp/userprofile-couchbase-mobile-reactnative-android
+```
+* Go to the directory containing the appropriate version of app. For example, for the "standalone" version of app, switch to standalone folder, for the "query" version o app, switch to "query" folder and so on.
+```
+cd  /path/to/cloned-repo/standalone
+
+```
+* Install dependencies 
+ 
+ ```
+ npm install
+ ```
+ 
+* Install couchbase lite react native plugin. For this, follow [instructions](https://github.com/rajagp/couchbase-lite-react-native-module/) to add the module to the project. Instructions are repeated here for convenience. In case of discrepencies, refer to the module repo.
+ 
+ ```bash
+ yarn add https://github.com/rajagp/couchbase-lite-react-native-module
+ 
+ ```
+ 
+* Add native couchbase lite framework as a dependency
+
+The module does not come bundled with the couchbase lite framework. You will have to include the appropriately licensed Couchbase Lite Android library as dependency within your app.
+ 
+The React native reference module requires minimal version of **Couchbase Lite v3.0.0**. 
+
+Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbase.com/downloads) page or can be pulled in via maven as described in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html).
+
+We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
+
+* Open the Android project located inside your React Native project under directory: `/path/to/userprofile-couchbase-mobile-reactnative-android/android` using Android Studio.
+
+**Option1: To add couchbase-lite-android as an .aar file**
+
+* Create a a new directory called 'libs' under your "**/path/to/userprofile-couchbase-mobile-reactnative-android/node_modules/react-native-cblite/android**" folder
+* Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
+```bash
+cd /path/to/userprofile-couchbase-mobile-reactnative-android/node_modules/react-native-cblite/android
+
+mkdir libs
+
+cp ~/path/to/couchbase-lite-android-ee-3.0.0.aar libs/ 
+```
+
+
+* In Android Studio, navigate to the "project structure" in order to add  couchbase lite library as a dependency.
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/project-structure.png)
+
+* Add "lib/couchbase-lite-android-ee-3.0.0.aar" as dependency to the couchbase lite React native module
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/adding-library-react-native.png)
+
+* Your dependency tree would look something like this
+
+![](https://blog.couchbase.com/wp-content/uploads/2021/09/dependency-tree.png)
+
+* In your 'Project' level `build.gradle` file, add the "libs" directory path using "flatDir"
+```
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+            // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+            url("$rootDir/../node_modules/react-native/android")
+        }
+        maven {
+            // Android JSC is installed from npm
+            url("$rootDir/../node_modules/jsc-android/dist")
+        }
+
+        google()
+        jcenter()
+        maven { url 'https://www.jitpack.io' }
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+```
+
+* In your 'app' level `build.gradle` file, add Couchbase Lite library under dependencies. 
+```bash
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation files('com.couchbase.couchbase-lite-android-ee-3.0.0')
+
+}
+```
+
+
+**Option2: Include couchbase-lite-android sdk from maven**
+
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
+
+##  Running the App
+Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
+
+Don't forget to start the Metro bundler before running your app!
+
+```bash
+npx react-native start
+```
+
+
+
+## Updates to Native Module
+
+If you update the plugin such as adding a new API, don't forget to  remove the plugin and re-add it to the app. 
+
+* Removing the module
+```bash
+yarn remove react-native-cblite
+```
+
+* Adding the module
+```bash
+yarn add https://github.com/rajagp/couchbase-lite-react-native-module
+```
+**Troubleshooting Tip**:
+
+ On occasion.  if the app isn't recognizing the latest plugin changes it may help to do a complete clean
+  - remove the root level `node_modules` folder
+  - Run "npm install"
+  - Repeat the steps to add the module and couchbase lite package.
+
+
+
+
