@@ -5,12 +5,13 @@ import CbliteAndroid from 'react-native-cblite'
 import * as RNFS from 'react-native-fs'
 import { SearchBar } from 'react-native-elements';
 import { Icon } from "react-native-elements";
-import { widthPercentageToDP } from 'react-native-responsive-screen'
 import { TouchableOpacity } from 'react-native'
+import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
 
 
 const CouchbaseNativeModule = CbliteAndroid;
 export default class Query extends React.Component {
+
 
     static navigationOptions = {
         headerShown: false
@@ -25,6 +26,92 @@ export default class Query extends React.Component {
     constructor(props) {
         super(props);
     }
+
+
+
+    componentDidMount() {
+        this.checkCopyDatabase();
+    }
+
+
+    async checkCopyDatabase() {
+
+        this.startLoading();
+
+        let newDirectory = RNFS.DocumentDirectoryPath + "/UniversitiesDB";
+        let newdbName = 'universities';
+        let newconfig = {
+            Directory: newDirectory
+        }
+
+
+        var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
+        console.log("dbexists", dbexists);
+
+        if (dbexists) {
+
+            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.success_callback, this.error_callback);
+
+        }
+        else {
+
+
+            //copy from assets to documents folder to perform copydatabase
+            let assetsDBFileName = "universities.zip";
+            let tempDestination = `${RNFS.CachesDirectoryPath}/${assetsDBFileName}`;
+            let dbTemp = `${RNFS.CachesDirectoryPath}/temp/`;
+            let zipfile = await RNFS.readDirAssets("db");
+    
+            await RNFS.copyFileAssets(zipfile[0].path, tempDestination);
+            await unzip(tempDestination,dbTemp);
+
+            //copy database
+            this.copyDatabase(dbTemp, newdbName, newconfig);
+
+
+        }
+
+
+        this.setState({
+            dbname: newdbName,
+            dbconfig: newconfig
+        });
+    }
+
+    copyDatabase(directory, newdbName, newconfig) {
+        let dbName = 'universities';
+        let config = {
+            Directory: directory
+        }
+        CouchbaseNativeModule.copyDatabase(dbName, newdbName, config, newconfig,
+            (SuccessResponse) => {
+                if (SuccessResponse == "Success") {
+
+                    CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.DBopen_success_callback, this.error_callback);
+
+                }
+                else {
+                    alert("There was a problem while copying universities database.");
+                }
+                console.log("copydb", SuccessResponse)
+            }
+            , this.error_callback);
+
+    }
+
+
+    startLoading = () => {
+        this.setState({
+            loading: true,
+        });
+    }
+    dismissLoading = () => {
+        this.setState({
+            loading: false,
+        });
+    }
+
+
 
 
     DBopen_success_callback = (SuccessResponse) => {
@@ -48,12 +135,11 @@ export default class Query extends React.Component {
 
     }
 
+
+
+
     success_callback = (SuccessResponse) => {
         console.log(SuccessResponse)
-
-        //test delete
-        // var dbaexists = CouchbaseNativeModule.deleteDatabase(this.state.dbname);
-        // console.log("dbdelete", dbaexists)
 
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
@@ -65,76 +151,17 @@ export default class Query extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.copyDatabase();
-    }
+
 
     error_callback = (ErrorResponse) => {
         this.dismissLoading();
-        alert("An error has occured : " + ErrorResponse);
+        alert(ErrorResponse);
         console.warn(ErrorResponse);
     }
 
 
-    copyDatabase() {
-
-        this.startLoading();
-
-        let newDirectory = RNFS.DocumentDirectoryPath + "/Universities";
-        let newdbName = 'universities';
-        let newconfig = {
-            Directory: newDirectory,
-        }
-
-        this.setState({
-            dbname: newdbName,
-            dbconfig: newconfig
-        });
-
-        let directory = RNFS.CachesDirectoryPath;
-        let dbName = 'universities.cblite';
-        let config = {
-            Directory: directory,
-        }
-
-        var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig);
-        console.log("dbexists", dbexists);
-
-        if (dbexists == "Database already exists") {
-
-            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.success_callback, this.error_callback);
-
-        }
-        else {
-            CouchbaseNativeModule.copyDatabase(dbName, newdbName, config, newconfig,
-                (SuccessResponse) => {
-                    if (SuccessResponse == "Success") {
-
-                        CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.DBopen_success_callback, this.error_callback);
-
-                    }
-                    else {
-                        alert("There was a problem while copying universities database.");
-                    }
-                }
-                , this.error_callback);
 
 
-        }
-
-    }
-
-
-    startLoading = () => {
-        this.setState({
-            loading: true,
-        });
-    }
-    dismissLoading = () => {
-        this.setState({
-            loading: false,
-        });
-    }
 
 
     async search() {
@@ -146,7 +173,7 @@ export default class Query extends React.Component {
             whereExpr += " AND " + countryQueryExpr;
         }
 
-        let queryStr = "SELECT * FROM universities WHERE " + whereExpr;
+        let queryStr = "select country from universities limit 1";
         console.log(queryStr);
         CouchbaseNativeModule.query(this.state.dbname, queryStr, (response) => {
             console.log(response);
