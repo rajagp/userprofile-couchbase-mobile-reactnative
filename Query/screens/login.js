@@ -1,8 +1,9 @@
-import React from 'react';
-import { SafeAreaView, StatusBar, View, Button, Image, TextInput } from 'react-native';
+import React from 'react'
+import { SafeAreaView, ActivityIndicator, StatusBar, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite';
-import * as RNFS from 'react-native-fs';
+import CbliteAndroid from 'react-native-cblite'
+import * as RNFS from 'react-native-fs'
+import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
 
 const CouchbaseNativeModule = CbliteAndroid;
 export default class Login extends React.Component {
@@ -12,36 +13,12 @@ export default class Login extends React.Component {
     };
 
     state = {
-        loaded: false,
         showpass: false,
+        loading: false,
     }
 
     constructor(props) {
         super(props);
-    }
-
-
-    success_callback = (SuccessResponse) => {
-
-        console.log(SuccessResponse);
-
-        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
-
-            this.props.navigation.navigate('profilescreen', { username: this.state.username });
-
-            this.setState({username:null,password:null});
-
-        }
-        else {
-            alert("There was a problem while login.");
-        }
-    }
-
-
-    error_callback = (ErrorResponse) => {
-        console.log(ErrorResponse);
-        alert("There was a problem while login : " + ErrorResponse);
-
     }
 
 
@@ -55,12 +32,142 @@ export default class Login extends React.Component {
                 Directory: directory,
             }
 
-            CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.success_callback, this.error_callback);
+            CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.userdb_success_callback, this.error_callback);
         }
         else {
             alert("Please enter Username and Password.");
         }
     }
+
+    userdb_success_callback = (SuccessResponse) => {
+
+        console.log(SuccessResponse);
+
+        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+            this.checkCopyDatabase();
+        }
+        else {
+            alert("There was a problem while login.");
+        }
+    }
+
+    async checkCopyDatabase() {
+
+        this.startLoading();
+
+        let newDirectory = RNFS.DocumentDirectoryPath + "/universitydatabase";
+        let newdbName = 'universities';
+        let newconfig = {
+            Directory: newDirectory
+        }
+
+
+        var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
+        console.log("dbexists", dbexists);
+
+        if (dbexists) {
+
+            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.dbexists_success_callback, this.error_callback);
+
+        }
+        else {
+
+            //copy from assets to documents folder to perform copydatabase
+            let assetsDBFileName = "universities.zip";
+            let tempDestination = `${RNFS.CachesDirectoryPath}/${assetsDBFileName}`;
+            let dbTemp = `${RNFS.CachesDirectoryPath}/temp/`;
+            let zipfile = await RNFS.readDirAssets("db");
+
+            await RNFS.copyFileAssets(zipfile[0].path, tempDestination);
+            await unzip(tempDestination, dbTemp);
+
+            //copy database
+            this.copyDatabase(dbTemp, newdbName, newconfig);
+
+        }
+
+
+        this.setState({
+            dbname: newdbName,
+            dbconfig: newconfig
+        });
+    }
+
+    copyDatabase(directory, newdbName, newconfig) {
+        let dbName = 'universities';
+        let config = {
+            Directory: directory
+        }
+        CouchbaseNativeModule.copyDatabase(dbName, newdbName, config, newconfig,
+            (SuccessResponse) => {
+                if (SuccessResponse == "Success") {
+
+                    CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.universities_dbcreated_success_callback, this.error_callback);
+
+                }
+                else {
+                    alert("There was a problem while copying universities database.");
+                }
+                console.log("copydb", SuccessResponse)
+            }
+            , this.error_callback);
+
+    }
+
+    universities_dbcreated_success_callback = (SuccessResponse) => {
+
+        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+
+            let indexExpressions = ['name', 'location'];
+            let indexName = "nameLocationIndex";
+
+            var indexResponse = CouchbaseNativeModule.createValueIndex(this.state.dbname, indexName, indexExpressions);
+
+            if (indexResponse == "Success") {
+                this.dismissLoading();
+                this.props.navigation.navigate('profilescreen', { username: this.state.username });
+                this.setState({ username: null, password: null });
+            }
+
+        }
+        else {
+            alert("There was a problem while opening database.");
+        }
+
+    }
+
+    dbexists_success_callback = (SuccessResponse) => {
+        console.log(SuccessResponse)
+
+        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+
+            this.dismissLoading();
+            this.props.navigation.navigate('profilescreen', { username: this.state.username });
+            this.setState({ username: null, password: null });
+        }
+        else {
+            alert("There was a problem while fetching universities.");
+        }
+    }
+
+    error_callback = (ErrorResponse) => {
+        console.log(ErrorResponse);
+        alert("There was a problem while login : " + ErrorResponse);
+        this.dismissLoading();
+    }
+
+    startLoading = () => {
+        this.setState({
+            loading: true,
+        });
+    }
+
+    dismissLoading = () => {
+        this.setState({
+            loading: false,
+        });
+    }
+
 
 
     render() {
@@ -86,9 +193,10 @@ export default class Login extends React.Component {
                         title="Sign in"
                         color="#E62125"
                         style={whole.button}
+                        disabled={this.state.loading}
                         onPress={() => this.user_Login()}
-                        />
-
+                    />
+                    {!this.state.loading ? null : <ActivityIndicator size="large" color="#E62125" />}
                 </View>
 
 

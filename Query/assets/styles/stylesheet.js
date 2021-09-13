@@ -82,7 +82,7 @@ const whole = StyleSheet.create({
     fontSize:14
   },
   listDescriptionText: {
-    color:"#ccc",
+    color:"#888",
     fontSize:12
   },
   mselectinput: {
