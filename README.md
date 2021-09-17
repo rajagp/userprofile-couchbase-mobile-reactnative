@@ -67,10 +67,10 @@ We discuss the steps to add the Couchbase Lite framework dependency depending on
 
 **Option1: To add couchbase-lite-android as an .aar file**
 
-* Create a a new directory called 'libs' under your "**/path/to/userprofile-couchbase-mobile-reactnative-android/node_modules/react-native-cblite/android**" folder
+* Create a a new directory called 'libs' under your "**/path/to/userprofile-couchbase-mobile-reactnative-android/android/app**" folder
 * Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
 ```bash
-cd /path/to/userprofile-couchbase-mobile-reactnative-android/node_modules/react-native-cblite/android
+cd /path/to/userprofile-couchbase-mobile-reactnative-android/android/app
 
 mkdir libs
 

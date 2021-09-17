@@ -68,7 +68,7 @@ export default class Profile extends React.Component {
 
     getDocumentOnerrorCallback = (errorResponse) => {
         if (!errorResponse == "Document not found") {
-            alert("There was a problem while fetching the data. Details : " + errorResponse);
+            alert("There was a problem while fetching the user data. Details : " + errorResponse);
         }
     }
 
@@ -162,11 +162,11 @@ export default class Profile extends React.Component {
 
         if(result=='Success')
         {
-            alert('Document saved successfully.');
+            alert('User profile updated');
         }
         else
         {
-            alert('There was a problem while saving the data. Details : '+result);
+            alert('There was a problem while updating the user data. Details : '+result);
         }
 
     }

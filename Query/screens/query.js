@@ -53,16 +53,14 @@ export default class Query extends React.Component {
         let whereExpr = "LOWER(name) LIKE '%" + this.state.searchText.toLowerCase() + "%'";
 
         if (this.state.countrySearchText != null && this.state.countrySearchText != "") {
-            let countryQueryExpr = "LOWER(country) LIKE '%" + this.countrySearchText.toLowerCase() + "%'";
+            let countryQueryExpr = "LOWER(country) LIKE '%" + this.state.countrySearchText.toLowerCase() + "%'";
             whereExpr += " AND " + countryQueryExpr;
         }
 
         let queryStr = "SELECT * FROM universities WHERE " + whereExpr;
         
-        console.log(queryStr);
         CouchbaseNativeModule.query(this.state.dbname, queryStr, (response) => {
-
-
+           // console.log(response)
             if (response != null) {
 
                 if (response.length > 0) {
@@ -70,9 +68,9 @@ export default class Query extends React.Component {
 
                     response.forEach((object) => {
                         jsonArray.push(JSON.parse(object));
+                       
                     })
-
-                    console.log(jsonArray);
+                   
                     this.setState({ dataArray: jsonArray })
                     this.dismissLoading();
                 }
@@ -99,12 +97,13 @@ export default class Query extends React.Component {
                 <View style={whole.verticalLinearLayout}>
 
                     <View style={whole.searchHeader}>
-                        <SearchBar lightTheme placeholder="Name" keyboardType='default' onChangeText={(searchText) => this.setState({ searchText })} value={this.state.searchText} />
-                        <SearchBar lightTheme placeholder="Country (optional)" onChangeText={(countryText) => this.setState({ countryText })} value={this.state.countryText} />
+                        <SearchBar lightTheme autoFocus placeholder="Name" keyboardType='default' onChangeText={(searchText) => this.setState({ searchText })} value={this.state.searchText} />
+                        <SearchBar lightTheme placeholder="Country (optional)" onChangeText={(countrySearchText) => this.setState({ countrySearchText })} value={this.state.countrySearchText} />
                         <Button
                             title="Search"
                             color="#E62125"
                             style={whole.button}
+                            disabled={this.state.searchText==null||this.state.searchText==''}
                             onPress={() => this.search()}
                         />
                         <View style={whole.msearchtextinput}></View>
@@ -119,6 +118,7 @@ export default class Query extends React.Component {
                             <TouchableOpacity style={whole.listitem} onPress={() => this.selectuni(item.universities.name)}>
                                 <Text style={whole.listMainText}>{item.universities.name}</Text>
                                 <Text style={whole.listDescriptionText}>{item.universities.country}</Text>
+                                <Text style={whole.listlinkText}>{item.universities.web_pages[0]}</Text>
                             </TouchableOpacity>
                         }
                     />

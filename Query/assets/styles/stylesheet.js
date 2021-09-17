@@ -85,6 +85,10 @@ const whole = StyleSheet.create({
     color:"#888",
     fontSize:12
   },
+  listlinkText: {
+    color:"#ccc",
+    fontSize:12
+  },
   mselectinput: {
     height: 40,
     margin: 12,

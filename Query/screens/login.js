@@ -41,7 +41,6 @@ export default class Login extends React.Component {
 
     userdb_success_callback = (SuccessResponse) => {
 
-        console.log(SuccessResponse);
 
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
             this.checkCopyDatabase();
@@ -63,7 +62,7 @@ export default class Login extends React.Component {
 
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
-        console.log("dbexists", dbexists);
+        
 
         if (dbexists) {
 
@@ -106,9 +105,8 @@ export default class Login extends React.Component {
 
                 }
                 else {
-                    alert("There was a problem while copying universities database.");
+                    alert("There was a problem while universities data setup.");
                 }
-                console.log("copydb", SuccessResponse)
             }
             , this.error_callback);
 
@@ -131,13 +129,13 @@ export default class Login extends React.Component {
 
         }
         else {
-            alert("There was a problem while opening database.");
+            alert("Failed to load Universities data.");
         }
 
     }
 
     dbexists_success_callback = (SuccessResponse) => {
-        console.log(SuccessResponse)
+
 
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
@@ -146,7 +144,7 @@ export default class Login extends React.Component {
             this.setState({ username: null, password: null });
         }
         else {
-            alert("There was a problem while fetching universities.");
+            alert("Failed to load Universities data.");
         }
     }
 
