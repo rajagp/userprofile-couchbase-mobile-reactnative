@@ -60,20 +60,12 @@ export default class Query extends React.Component {
         let queryStr = "SELECT * FROM universities WHERE " + whereExpr;
         
         CouchbaseNativeModule.query(this.state.dbname, queryStr, (response) => {
-           // console.log(response)
+
             if (response != null) {
-
                 if (response.length > 0) {
-                    var jsonArray = [];
-
-                    response.forEach((object) => {
-                        jsonArray.push(JSON.parse(object));
-                       
-                    })
-                   
-                    this.setState({ dataArray: jsonArray })
-                    this.dismissLoading();
+                    this.setState({ dataArray: JSON.parse(response) });
                 }
+                this.dismissLoading();
             }
         }, this.error_callback);
 
