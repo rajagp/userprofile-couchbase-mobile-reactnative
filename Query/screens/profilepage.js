@@ -139,6 +139,10 @@ export default class Profile extends React.Component {
 
     }
 
+    error_callback = (ErrorResponse) => {
+        alert("Error while logout, please try again.")
+    }
+
     saveProfile = () => {
 
         var data = this.state.UserObject;
@@ -188,9 +192,24 @@ export default class Profile extends React.Component {
 
             //stop listeneing
             DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
-            let closeMainDB = CouchbaseNativeModule.closeDatabase(this.state.dbname);
-            let closeUniDB = CouchbaseNativeModule.closeDatabase('universities');
-            this.props.navigation.goBack();
+
+            //close userdb
+            CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
+
+                if (uDBsuccess == "Success") {
+
+                    //close universities db
+                    CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
+
+                        this.props.navigation.goBack();
+
+                    }, this.error_callback);
+
+                }
+                else {
+                    this.error_callback();
+                }
+            }, this.error_callback);
 
         }
 

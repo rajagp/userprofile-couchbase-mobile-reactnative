@@ -42,7 +42,6 @@ export default class Query extends React.Component {
     error_callback = (ErrorResponse) => {
         this.dismissLoading();
         alert(ErrorResponse);
-        console.warn(ErrorResponse);
     }
 
 

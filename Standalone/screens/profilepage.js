@@ -182,8 +182,14 @@ export default class Profile extends React.Component {
 
             //stop listeneing
              DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
-             let close = CouchbaseNativeModule.closeDatabase(this.state.dbname);
-             this.props.navigation.goBack();
+             CouchbaseNativeModule.closeDatabase(this.state.dbname,(uDBsuccess)=>{
+                if (uDBsuccess == "Success") {
+                    this.props.navigation.goBack();
+                }
+             },(error)=>{
+                alert("Logout failed, please try again.")
+             });
+             
              
         }
  
