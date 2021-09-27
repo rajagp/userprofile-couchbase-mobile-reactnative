@@ -1,8 +1,8 @@
-import React from 'react';
-import { SafeAreaView, StatusBar, DeviceEventEmitter, View, Button, Image, TextInput } from 'react-native';
+import React from 'react'
+import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
-import { launchImageLibrary } from 'react-native-image-picker';
-import CbliteAndroid from 'react-native-cblite';
+import { launchImageLibrary } from 'react-native-image-picker'
+import CbliteAndroid from 'react-native-cblite'
 
 const options = {
     title: 'Select image',
@@ -19,7 +19,7 @@ export default class Profile extends React.Component {
 
     static navigationOptions = {
         headerShown: true,
-     
+
     };
 
     state = {
@@ -39,13 +39,14 @@ export default class Profile extends React.Component {
 
 
         if (result != null && result != "Document is null") {
-          
+
             var userobj = JSON.parse(result);
 
             this.setState({
                 UserObject: userobj,
                 name: userobj.name,
                 address: userobj.address,
+                university: userobj.university
             });
 
             if (userobj.image) {
@@ -138,12 +139,17 @@ export default class Profile extends React.Component {
 
     }
 
+    error_callback = (ErrorResponse) => {
+        alert("Error while logout, please try again.")
+    }
+
     saveProfile = () => {
 
         var data = this.state.UserObject;
         data.type = "user";
         data.name = this.state.name;
         data.address = this.state.address;
+        data.university = this.state.university;
 
         if (this.state.imagedata) {
             let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
@@ -151,28 +157,32 @@ export default class Profile extends React.Component {
                 data.image = blob;
             }
         }
-        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data),this.OnSetDocSuccess,
-        (error) => { alert(error); 
-        });
+        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
+            (error) => {
+                alert(error);
+            });
 
     }
 
 
     OnSetDocSuccess = (result) => {
 
-        if(result=='Success')
-        {
-            alert('User profile updated');
+        if (result == 'Success') {
+            alert('User Profile Updated');
         }
-        else
-        {
-            alert('There was a problem while updating the user data. Details : '+result);
+        else {
+            alert('There was a problem while updating the user data. Details : ' + result);
         }
 
     }
 
 
 
+    setuniversity = (name) => {
+        this.setState({
+            university: name,
+        });
+    }
 
     logout = () => {
 
@@ -181,23 +191,33 @@ export default class Profile extends React.Component {
         if (removeListnerResponse == "Success") {
 
             //stop listeneing
-             DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
-             CouchbaseNativeModule.closeDatabase(this.state.dbname,(uDBsuccess)=>{
+            DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
+
+            //close userdb
+            CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
+
                 if (uDBsuccess == "Success") {
-                    this.props.navigation.goBack();
+
+                    //close universities db
+                    CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
+
+                        this.props.navigation.goBack();
+
+                    }, this.error_callback);
+
                 }
-             },(error)=>{
-                alert("Logout failed, please try again.")
-             });
-             
-             
+                else {
+                    this.error_callback();
+                }
+            }, this.error_callback);
+
         }
- 
+
 
     }
 
     render() {
-
+        const { navigate } = this.props.navigation;
         return (
 
             <SafeAreaView style={whole.container}>
@@ -222,6 +242,9 @@ export default class Profile extends React.Component {
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
+                        <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
+                            <Text>{this.state.university ? this.state.university : "Select University"}</Text><Text>{">"}</Text>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={whole.centerLayoutProfile}>
@@ -229,8 +252,7 @@ export default class Profile extends React.Component {
                             title="Logout"
                             color="#E62125"
                             style={whole.button}
-                            onPress={this.logout}
-                        />
+                            onPress={this.logout} />
 
                         <Button
                             title="Save"
