@@ -88,18 +88,47 @@ export default class Profile extends React.Component {
 
         CouchbaseNativeModule.getDocument(dbName, docId, this.getDocumentOnsuccessCallback, this.getDocumentOnerrorCallback);
 
-
         //add listeners
-        var jsListner = "DatabaseChangeEvent";
-        var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
-        console.log("Add Listner :", x);
-        if (x == "Success") {
-            //start listening
-            DeviceEventEmitter.addListener(jsListner, this.onDbchange);
-        }
+        // var jsListner = "DatabaseChangeEvent";
+        // var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
+        // console.log("Add Listner :", x);
+        // if (x == "Success") {
+        //     //start listening
+        //     DeviceEventEmitter.addListener(jsListner, this.onDbchange);
+        // }
 
+        //add sync
+        this.syncSetup(dbName,id,pass);
 
     }
+
+
+
+    syncSetup(dbname,authUsername,authpassword){
+        // var config = ReplicatorConfiguration.init(database: db, target: URLEndpoint.init(url:"ws://localhost:4984/userprofile"))
+        // config.authenticator =  BasicAuthenticator(username: user, password: password)
+
+        // let authUsername="demo@example.com"
+        // let authpassword="password"
+
+        var config = {
+            databaseName:dbname,
+            target:"ws://localhost:4984/userprofile",
+            authenticator:{
+                authType:"Basic",
+                username:authUsername,
+                password:authpassword
+            }
+        }
+        //start replicator
+        CouchbaseNativeModule.replicatorStart(dbname,config,(sucess)=>{
+            console.log(sucess)
+        },(eror)=>{
+            console.error(eror)
+        });
+
+    }
+
 
     onDbchange = (event) => {
         if (event.Modified) {
