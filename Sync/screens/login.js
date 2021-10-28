@@ -140,7 +140,7 @@ export default class Login extends React.Component {
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
             this.dismissLoading();
-            this.props.navigation.navigate('profilescreen', { username: this.state.username });
+            this.props.navigation.navigate('profilescreen', { username: this.state.username,password:this.state.password });
             this.setState({ username: null, password: null });
         }
         else {

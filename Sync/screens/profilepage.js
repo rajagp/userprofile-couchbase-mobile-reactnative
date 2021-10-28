@@ -25,6 +25,7 @@ export default class Profile extends React.Component {
     state = {
         loaded: false,
         UserObject: {},
+        replicators: [],
         imagepath: require('../assets/img/avatar.png'),
     }
 
@@ -73,11 +74,12 @@ export default class Profile extends React.Component {
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
 
         //setup
         var id = this.props.navigation.state.params.username;
-        let docId = `user::<${id}>`;
+        var pass = this.props.navigation.state.params.password;
+        let docId = `user::${id}`;
         let dbName = `userprofile`;
 
         this.setState({
@@ -88,23 +90,16 @@ export default class Profile extends React.Component {
 
         CouchbaseNativeModule.getDocument(dbName, docId, this.getDocumentOnsuccessCallback, this.getDocumentOnerrorCallback);
 
-        //add listeners
-        // var jsListner = "DatabaseChangeEvent";
-        // var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
-        // console.log("Add Listner :", x);
-        // if (x == "Success") {
-        //     //start listening
-        //     DeviceEventEmitter.addListener(jsListner, this.onDbchange);
-        // }
-
         //add sync
-        this.syncSetup(dbName,id,pass);
+        this.syncSetup(dbName, id, pass);
+
+        //stopping sync
+        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging("REPLICATOR", "DEBUG")
+        console.log("logging", loggingResponse);
 
     }
 
-
-
-    syncSetup(dbname,authUsername,authpassword){
+    syncSetup(dbname, authUsername, authpassword) {
         // var config = ReplicatorConfiguration.init(database: db, target: URLEndpoint.init(url:"ws://localhost:4984/userprofile"))
         // config.authenticator =  BasicAuthenticator(username: user, password: password)
 
@@ -112,23 +107,51 @@ export default class Profile extends React.Component {
         // let authpassword="password"
 
         var config = {
-            databaseName:dbname,
-            target:"ws://localhost:4984/userprofile",
-            authenticator:{
-                authType:"Basic",
-                username:authUsername,
-                password:authpassword
+            databaseName: dbname,
+            target: "ws://10.0.2.2:4984/userprofile",
+            authenticator: {
+                authType: "Basic",
+                username: authUsername,
+                password: authpassword
             }
         }
+
         //start replicator
-        CouchbaseNativeModule.replicatorStart(dbname,config,(sucess)=>{
-            console.log(sucess)
-        },(eror)=>{
-            console.error(eror)
+        CouchbaseNativeModule.replicatorStart(dbname, config, (sucess) => {
+            console.log("sync success", sucess)
+            var response = JSON.parse(sucess);
+            if (response.status == "Success") {
+
+                //add listeners
+                var ReplicatorID = response.ReplicatorID;
+                this.setState({ replicators: [...ReplicatorID] });
+
+                var jsListner = "ReplicatorChangeEvent" + ReplicatorID;
+                var x = CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, jsListner);
+                console.log("Add Listner :", x);
+                if (x == "Success") {
+                    //start listening
+                    DeviceEventEmitter.addListener(jsListner, this.onDbchange);
+                }
+
+            }
+        }, (eror) => {
+            console.error("sync error", eror)
         });
 
     }
 
+    syncStop = async (dbname) => {
+
+        //stop replicators
+        this.state.replicators.forEach( async (id) => {
+            var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(dbname, id);
+            if (ReplicatorStopResposne == "Success") {
+                await CouchbaseNativeModule.replicationRemoveListener(dbname, id);
+            }
+        });
+
+    }
 
     onDbchange = (event) => {
         if (event.Modified) {
@@ -155,7 +178,7 @@ export default class Profile extends React.Component {
 
                 let image = response.assets[0].base64;
                 let _imagetype = response.assets[0].type;
-                 console.log(image,imagetype)
+                console.log(image, imagetype)
                 // You can also display the image using data:
                 this.setState({
                     imagepath: source,
@@ -176,6 +199,7 @@ export default class Profile extends React.Component {
 
         var data = this.state.UserObject;
         data.type = "user";
+        data.email = this.state.email;
         data.name = this.state.name;
         data.address = this.state.address;
         data.university = this.state.university;
@@ -186,14 +210,13 @@ export default class Profile extends React.Component {
                 data.image = blob;
             }
         }
-        console.log("User profile data",data);
+        console.log("User profile data", data);
         CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
             (error) => {
                 alert(error);
             });
 
     }
-
 
     OnSetDocSuccess = (result) => {
 
@@ -206,8 +229,6 @@ export default class Profile extends React.Component {
 
     }
 
-
-
     setuniversity = (name) => {
         this.setState({
             university: name,
@@ -217,31 +238,33 @@ export default class Profile extends React.Component {
     logout = () => {
 
         //remove listners
-        var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
-        if (removeListnerResponse == "Success") {
+        // var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
+        //if (removeListnerResponse == "Success") {
 
-            //stop listeneing
-            DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
+        //stop listeneing
+        // DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
 
-            //close userdb
-            CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
+        //close userdb
+        CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
 
-                if (uDBsuccess == "Success") {
+            if (uDBsuccess == "Success") {
 
-                    //close universities db
-                    CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
+                //close universities db
+                CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
 
-                        this.props.navigation.goBack();
+                    this.syncStop(this.state.dbname);
 
-                    }, this.error_callback);
+                    this.props.navigation.goBack();
 
-                }
-                else {
-                    this.error_callback();
-                }
-            }, this.error_callback);
+                }, this.error_callback);
 
-        }
+            }
+            else {
+                this.error_callback();
+            }
+        }, this.error_callback);
+
+        //  }
 
 
     }
