@@ -41,7 +41,7 @@ export default class Profile extends React.Component {
 
         if (result != null && result != "Document is null") {
 
-            var userobj = JSON.parse(result);
+            var userobj = result;
 
             this.setState({
                 UserObject: userobj,
@@ -88,23 +88,43 @@ export default class Profile extends React.Component {
             dbname: dbName
         });
 
-        CouchbaseNativeModule.getDocument(dbName, docId, this.getDocumentOnsuccessCallback, this.getDocumentOnerrorCallback);
-
-        //add sync
+        // Add Sync
         this.syncSetup(dbName, id, pass);
 
-        //stopping sync
-        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging("REPLICATOR", "DEBUG")
+        // Enable Logging
+        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "VERBOSE")
         console.log("logging", loggingResponse);
+
+
+    }
+
+    getdocument(dbname, docid, ReplicatorID) {
+
+        let queryStr = `SELECT * FROM ${dbname} WHERE META().id = "${docid}"`;
+
+        CouchbaseNativeModule.query(dbname, queryStr, async (response) => {
+
+            if (response != null) {
+                if (response.length > 0) {
+                    this.setState({ queryStr, dataArray: JSON.parse(response) });
+                    this.getDocumentOnsuccessCallback(JSON.parse(response)[0].userprofile)
+                    var jsListner = "ReplicatorChangeEvent" + ReplicatorID;
+                    var querylistener = await CouchbaseNativeModule.replicationAddListener(dbname,ReplicatorID, jsListner);
+
+                    console.log("Add listener", querylistener);
+
+                    if (querylistener == "Success") {
+                        //Start Listening 
+                        DeviceEventEmitter.addListener(jsListner, this.onDbchange);
+                    }
+                }
+
+            }
+        }, this.error_callback);
 
     }
 
     syncSetup(dbname, authUsername, authpassword) {
-        // var config = ReplicatorConfiguration.init(database: db, target: URLEndpoint.init(url:"ws://localhost:4984/userprofile"))
-        // config.authenticator =  BasicAuthenticator(username: user, password: password)
-
-        // let authUsername="demo@example.com"
-        // let authpassword="password"
 
         var config = {
             databaseName: dbname,
@@ -116,50 +136,57 @@ export default class Profile extends React.Component {
             }
         }
 
-        //start replicator
-        CouchbaseNativeModule.replicatorStart(dbname, config, (sucess) => {
-            console.log("sync success", sucess)
-            var response = JSON.parse(sucess);
-            if (response.status == "Success") {
+        if (this.state.replicators.length < 1) {
+            //start replicator
+            CouchbaseNativeModule.replicatorStart(dbname, config, (sucess) => {
+                console.log("sync success", sucess)
+                var response = JSON.parse(sucess);
+                if (response.status == "Success") {
 
-                //add listeners
-                var ReplicatorID = response.ReplicatorID;
-                this.setState({ replicators: [...ReplicatorID] });
+                    // Add Replicator ID
+                    var ReplicatorID = response.ReplicatorID;
+                    var reparray = this.state.replicators;
+                    reparray.push(ReplicatorID)
+                    this.setState({ replicators: reparray });
+                    this.getdocument(dbname, this.state.docid, ReplicatorID);
 
-                var jsListner = "ReplicatorChangeEvent" + ReplicatorID;
-                var x = CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, jsListner);
-                console.log("Add Listner :", x);
-                if (x == "Success") {
-                    //start listening
-                    DeviceEventEmitter.addListener(jsListner, this.onDbchange);
+
+
                 }
-
-            }
-        }, (eror) => {
-            console.error("sync error", eror)
-        });
+            }, (eror) => {
+                console.error("sync error", eror)
+            });
+        }
 
     }
 
-    syncStop = async (dbname) => {
-
+    syncStop = async () => {
         //stop replicators
-        this.state.replicators.forEach( async (id) => {
-            var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(dbname, id);
-            if (ReplicatorStopResposne == "Success") {
-                await CouchbaseNativeModule.replicationRemoveListener(dbname, id);
+
+        this.state.replicators.forEach(async (id) => {
+
+            var querylistener = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname,id);
+            console.log("Remove listner",querylistener)
+            if (querylistener == "Success") {
+                //close database and logout 
+                DeviceEventEmitter.removeAllListeners();
+                var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, id);
+                console.log("Replication",ReplicatorStopResposne)
+
+                if (ReplicatorStopResposne == "Success") {
+                    this.logout();
+                }
+
             }
         });
 
     }
 
     onDbchange = (event) => {
+        console.log("query change event", event);
         if (event.Modified) {
             var docIds = Object.keys(event.Modified);
             var docs = Object.values(event.Modified);
-            // console.warn("Event", "Modified");
-            // console.warn("Docid", docIds[0]);
-            // console.warn("Doc", docs[0]);
         }
     };
 
@@ -192,7 +219,7 @@ export default class Profile extends React.Component {
     }
 
     error_callback = (ErrorResponse) => {
-        alert("Error while logout, please try again.")
+        alert(ErrorResponse)
     }
 
     saveProfile = () => {
@@ -235,14 +262,12 @@ export default class Profile extends React.Component {
         });
     }
 
+    // componentWillUnmount()
+    // {
+    //     this.logout();
+    // }
+
     logout = () => {
-
-        //remove listners
-        // var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
-        //if (removeListnerResponse == "Success") {
-
-        //stop listeneing
-        // DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
 
         //close userdb
         CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
@@ -251,9 +276,6 @@ export default class Profile extends React.Component {
 
                 //close universities db
                 CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
-
-                    this.syncStop(this.state.dbname);
-
                     this.props.navigation.goBack();
 
                 }, this.error_callback);
@@ -263,8 +285,6 @@ export default class Profile extends React.Component {
                 this.error_callback();
             }
         }, this.error_callback);
-
-        //  }
 
 
     }
@@ -305,7 +325,7 @@ export default class Profile extends React.Component {
                             title="Logout"
                             color="#E62125"
                             style={whole.button}
-                            onPress={this.logout} />
+                            onPress={this.syncStop} />
 
                         <Button
                             title="Save"

@@ -18,3 +18,4 @@ Sync/android/app/build
 Sync/android/.gradle/
 Sync/android/.idea/
 Sync/android/local.properties
+Sync/yarn-error.log
