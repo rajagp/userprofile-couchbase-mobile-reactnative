@@ -26,6 +26,8 @@ export default class Profile extends React.Component {
         loaded: false,
         UserObject: {},
         replicators: [],
+        jsrepListner: "ReplicatorChangeEvent",
+        jsqueryListner: "QueryChangeEvent",
         imagepath: require('../assets/img/avatar.png'),
     }
 
@@ -88,46 +90,22 @@ export default class Profile extends React.Component {
             dbname: dbName
         });
 
-        // Add Sync
-        this.syncSetup(dbName, id, pass);
-
         // Enable Logging
         var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "VERBOSE")
         console.log("logging", loggingResponse);
 
+        // Add Sync
+        this.syncSetup(dbName, id, pass);
+
+
 
     }
 
-    getdocument(dbname, docid, ReplicatorID) {
-
-        let queryStr = `SELECT * FROM ${dbname} WHERE META().id = "${docid}"`;
-
-        CouchbaseNativeModule.query(dbname, queryStr, async (response) => {
-
-            if (response != null) {
-                if (response.length > 0) {
-                    this.setState({ queryStr, dataArray: JSON.parse(response) });
-                    this.getDocumentOnsuccessCallback(JSON.parse(response)[0].userprofile)
-                    var jsListner = "ReplicatorChangeEvent" + ReplicatorID;
-                    var querylistener = await CouchbaseNativeModule.replicationAddListener(dbname,ReplicatorID, jsListner);
-
-                    console.log("Add listener", querylistener);
-
-                    if (querylistener == "Success") {
-                        //Start Listening 
-                        DeviceEventEmitter.addListener(jsListner, this.onDbchange);
-                    }
-                }
-
-            }
-        }, this.error_callback);
-
-    }
-
-    syncSetup(dbname, authUsername, authpassword) {
+    syncSetup = async (dbname, authUsername, authpassword) => {
 
         var config = {
             databaseName: dbname,
+            continuous: true,
             target: "ws://10.0.2.2:4984/userprofile",
             authenticator: {
                 authType: "Basic",
@@ -136,58 +114,73 @@ export default class Profile extends React.Component {
             }
         }
 
-        if (this.state.replicators.length < 1) {
-            //start replicator
-            CouchbaseNativeModule.replicatorStart(dbname, config, (sucess) => {
-                console.log("sync success", sucess)
-                var response = JSON.parse(sucess);
-                if (response.status == "Success") {
+        //Create Replicator
+        let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
+        console.log(ReplicatorID);
 
-                    // Add Replicator ID
-                    var ReplicatorID = response.ReplicatorID;
-                    var reparray = this.state.replicators;
-                    reparray.push(ReplicatorID)
-                    this.setState({ replicators: reparray });
-                    this.getdocument(dbname, this.state.docid, ReplicatorID);
+        //Start Replicator
+        let replicatorResponse = await CouchbaseNativeModule.replicatorStart(dbname, ReplicatorID);
+        if (replicatorResponse == "Success") {
+            // Add Replicator ID
+            console.log("replicator started", replicatorResponse)
+            this.setState({ ReplicatorID });
+            this.getdocument(dbname, this.state.docid, ReplicatorID);
 
-
-
-                }
-            }, (eror) => {
-                console.error("sync error", eror)
-            });
         }
+        else {
+            console.error("sync error", eror)
+        }
+
 
     }
 
-    syncStop = async () => {
-        //stop replicators
+    getdocument() {
 
-        this.state.replicators.forEach(async (id) => {
+        let queryStr = `SELECT * FROM ${this.state.dbname} WHERE META().id = "${this.state.docid}"`;
 
-            var querylistener = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname,id);
-            console.log("Remove listner",querylistener)
-            if (querylistener == "Success") {
-                //close database and logout 
-                DeviceEventEmitter.removeAllListeners();
-                var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, id);
-                console.log("Replication",ReplicatorStopResposne)
+        CouchbaseNativeModule.executeQuery(this.state.dbname, queryStr, async (response) => {
 
-                if (ReplicatorStopResposne == "Success") {
-                    this.logout();
+            if (response != null) {
+                let userdata = JSON.parse(response);
+                if (userdata.length > 0) {
+                    this.setState({ queryStr });
+                    this.getDocumentOnsuccessCallback(userdata[0].userprofile)
+                    this.addlisteners();
                 }
-
             }
-        });
+        }, this.error_callback);
+
+    }
+
+    addlisteners = async() => {
+
+        var replistener = await CouchbaseNativeModule.replicationAddListener(this.state.dbname, this.state.ReplicatorID, this.state.jsrepListner);
+        console.log("Add replicator listener", replistener);
+        if (replistener == "Success")
+            DeviceEventEmitter.addListener(this.state.jsrepListner, this.onRepchange);
+        else
+            alert("Error while setting up sync.")
+
+
+        var querylistener = await CouchbaseNativeModule.addQueryChangeListener(this.state.dbname, this.state.queryStr, this.state.jsqueryListner);
+        console.log("Add query listener", querylistener);
+        if (querylistener == "Success")
+            DeviceEventEmitter.addListener(this.state.jsqueryListner, this.onDbchange);
+        else
+            alert("Error while setting up sync.")
 
     }
 
     onDbchange = (event) => {
-        console.log("query change event", event);
-        if (event.Modified) {
-            var docIds = Object.keys(event.Modified);
-            var docs = Object.values(event.Modified);
+        console.log("Query Change Event", event);
+        let response = JSON.parse(event);
+        if (response.length>0) {
+            this.getDocumentOnsuccessCallback(response[0].userprofile)
         }
+    };
+
+    onRepchange = (event) => {
+        console.log("Replicator change event", event);
     };
 
     selectpicture = () => {
@@ -204,13 +197,13 @@ export default class Profile extends React.Component {
                 const source = { uri: response.assets[0].uri };
 
                 let image = response.assets[0].base64;
-                let _imagetype = response.assets[0].type;
-                console.log(image, imagetype)
+                let mimagetype = response.assets[0].type;
+                console.log(image, mimagetype)
                 // You can also display the image using data:
                 this.setState({
                     imagepath: source,
                     imagedata: image,
-                    imagetype: _imagetype,
+                    imagetype: mimagetype,
                 });
 
             }
@@ -262,10 +255,38 @@ export default class Profile extends React.Component {
         });
     }
 
-    // componentWillUnmount()
-    // {
-    //     this.logout();
-    // }
+    
+    syncStop = async () => {
+
+        //Stop replicator listener
+        var replistener = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
+        if (replistener != "Success")
+            alert("Error while logout", replistener)
+        else {
+
+            DeviceEventEmitter.removeAllListeners(this.state.jsrepListner);
+
+            //Stop Replicators
+            var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, this.state.ReplicatorID);
+            if (ReplicatorStopResposne != "Success")
+                alert("Error while logout", querylistener)
+
+        }
+
+        //Stop Query Listener
+        var querylistener = await CouchbaseNativeModule.removeQueryChangeListener(this.state.dbname, this.state.queryStr);
+        if (querylistener != "Success")
+            alert("Error while logout", querylistener)
+        else {
+            DeviceEventEmitter.removeAllListeners(this.state.jsqueryListner);
+
+            //Close DB and Logout
+            this.logout();
+        }
+
+
+    }
+
 
     logout = () => {
 
