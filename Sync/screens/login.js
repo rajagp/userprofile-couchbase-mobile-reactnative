@@ -21,6 +21,9 @@ export default class Login extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+        this.checkUniversitiesDBCopy();
+    }
 
     async user_Login() {
 
@@ -32,25 +35,69 @@ export default class Login extends React.Component {
                 Directory: directory,
             }
 
-            CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.userdb_success_callback, this.error_callback);
+            CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, (SuccessResponse) => {
+
+                if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+                    this.setupReplicator(dbName, this.state.username, this.state.password)
+                }
+                else {
+                    alert("There was a problem while login.");
+                }
+
+            }, this.error_callback);
         }
         else {
             alert("Please enter Username and Password.");
         }
     }
 
-    userdb_success_callback = (SuccessResponse) => {
+    setupReplicator = async (dbname, authUsername, authpassword) => {
+
+        this.startLoading();
+
+        var config = {
+            databaseName: dbname,
+            continuous: true,
+            target: "ws://10.0.2.2:4984/userprofile",
+            authenticator: {
+                authType: "Basic",
+                username: authUsername,
+                password: authpassword
+            }
+        }
+
+        //Create Replicator
+        let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
+        console.log("ReplicatorID",ReplicatorID);
 
 
-        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
-            this.checkCopyDatabase();
+        //Add Replicator Listener
+        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname,ReplicatorID,"ReplicatorChangeEvent");
+        console.log("ReplicatorListenerResponse",ReplicatorListenerResponse);
+
+
+
+        //Start Replicator
+        let startReplicatorResponse = await CouchbaseNativeModule.replicatorStart(dbname, ReplicatorID);
+        console.log("replicator started", startReplicatorResponse)
+
+        if (startReplicatorResponse == "Success") {
+            // Add Replicator ID
+            this.setState({ ReplicatorID },()=>
+            {
+                 this.loginSucess();
+            });
+           
         }
         else {
-            alert("There was a problem while login.");
+            console.error("Replicator starting error", eror)
         }
+
+
     }
 
-    async checkCopyDatabase() {
+
+    async checkUniversitiesDBCopy() {
 
         this.startLoading();
 
@@ -62,11 +109,10 @@ export default class Login extends React.Component {
 
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
-        
 
         if (dbexists) {
 
-            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.dbexists_success_callback, this.error_callback);
+            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.universities_dbcreated_success_callback, this.error_callback);
 
         }
         else {
@@ -120,13 +166,13 @@ export default class Login extends React.Component {
             let indexName = "nameLocationIndex";
 
             var indexResponse = CouchbaseNativeModule.createValueIndex(this.state.dbname, indexName, indexExpressions);
+            console.log(indexResponse);
 
-            if (indexResponse == "Success") {
-                this.dismissLoading();
-                this.props.navigation.navigate('profilescreen', { username: this.state.username,password:this.state.password });
-                this.setState({ username: null, password: null });
+            if (indexResponse != "Success") {
+                alert("Failed to load Universities data.");
             }
 
+            this.dismissLoading();
         }
         else {
             alert("Failed to load Universities data.");
@@ -134,18 +180,11 @@ export default class Login extends React.Component {
 
     }
 
-    dbexists_success_callback = (SuccessResponse) => {
 
-
-        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
-
-            this.dismissLoading();
-            this.props.navigation.navigate('profilescreen', { username: this.state.username,password:this.state.password });
-            this.setState({ username: null, password: null });
-        }
-        else {
-            alert("Failed to load Universities data.");
-        }
+    loginSucess = () => {
+        this.dismissLoading();
+        this.props.navigation.navigate('profilescreen', { username: this.state.username, password: this.state.password, ReplicatorID: this.state.ReplicatorID });
+        this.setState({ username: null, password: null });
     }
 
     error_callback = (ErrorResponse) => {

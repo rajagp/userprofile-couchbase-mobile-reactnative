@@ -35,11 +35,9 @@ export default class Profile extends React.Component {
         super(props);
     }
 
-    getDocumentOnsuccessCallback = (successResponse) => {
+    setUserData = (successResponse) => {
 
         let result = successResponse;
-        console.log("getDoc : ", result);
-
 
         if (result != null && result != "Document is null") {
 
@@ -80,107 +78,60 @@ export default class Profile extends React.Component {
 
         //setup
         var id = this.props.navigation.state.params.username;
-        var pass = this.props.navigation.state.params.password;
+        var replicatorID = this.props.navigation.state.params.ReplicatorID;
         let docId = `user::${id}`;
         let dbName = `userprofile`;
 
         this.setState({
             email: id,
             docid: docId,
-            dbname: dbName
+            dbname: dbName,
+            ReplicatorID : replicatorID
         });
 
-        // Enable Logging
-        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "VERBOSE")
+
+        // Add JSlistener to replicator
+        DeviceEventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
+
+        // Enable Logging (null = All Domains)
+        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "INFO")
+
         console.log("logging", loggingResponse);
 
-        // Add Sync
-        this.syncSetup(dbName, id, pass);
 
-
-
-    }
-
-    syncSetup = async (dbname, authUsername, authpassword) => {
-
-        var config = {
-            databaseName: dbname,
-            continuous: true,
-            target: "ws://10.0.2.2:4984/userprofile",
-            authenticator: {
-                authType: "Basic",
-                username: authUsername,
-                password: authpassword
-            }
-        }
-
-        //Create Replicator
-        let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
-        console.log(ReplicatorID);
-
-        //Start Replicator
-        let replicatorResponse = await CouchbaseNativeModule.replicatorStart(dbname, ReplicatorID);
-        if (replicatorResponse == "Success") {
-            // Add Replicator ID
-            console.log("replicator started", replicatorResponse)
-            this.setState({ ReplicatorID });
-            this.getdocument(dbname, this.state.docid, ReplicatorID);
-
-        }
-        else {
-            console.error("sync error", eror)
-        }
+        // Add Live Query
+        this.setupLiveQuery();
 
 
     }
 
-    getdocument() {
+
+    OnReplicatorChanged = (event) => {
+        console.log("Replicator Change Event", event);
+    }
+
+    setupLiveQuery = async () => {
 
         let queryStr = `SELECT * FROM ${this.state.dbname} WHERE META().id = "${this.state.docid}"`;
+        this.setState({ queryStr });
 
-        CouchbaseNativeModule.executeQuery(this.state.dbname, queryStr, async (response) => {
+        let queryResponse = await CouchbaseNativeModule.queryWithChangeListener(this.state.dbname, queryStr, this.state.jsqueryListner);
+        console.log("query", queryResponse)
 
-            if (response != null) {
-                let userdata = JSON.parse(response);
-                if (userdata.length > 0) {
-                    this.setState({ queryStr });
-                    this.getDocumentOnsuccessCallback(userdata[0].userprofile)
-                    this.addlisteners();
-                }
-            }
-        }, this.error_callback);
+        if (queryResponse == "Success") {
+            DeviceEventEmitter.addListener(this.state.jsqueryListner, this.onQueryUpdated);
+        } else {
+            alert("There was an issue while setting up sync")
+        }
 
     }
 
-    addlisteners = async() => {
-
-        var replistener = await CouchbaseNativeModule.replicationAddListener(this.state.dbname, this.state.ReplicatorID, this.state.jsrepListner);
-        console.log("Add replicator listener", replistener);
-        if (replistener == "Success")
-            DeviceEventEmitter.addListener(this.state.jsrepListner, this.onRepchange);
-        else
-            alert("Error while setting up sync.")
-
-
-        var querylistener = await CouchbaseNativeModule.addQueryChangeListener(this.state.dbname, this.state.queryStr, this.state.jsqueryListner);
-        console.log("Add query listener", querylistener);
-        if (querylistener == "Success")
-            DeviceEventEmitter.addListener(this.state.jsqueryListner, this.onDbchange);
-        else
-            alert("Error while setting up sync.")
-
-    }
-
-    onDbchange = (event) => {
+    onQueryUpdated = (event) => {
         console.log("Query Change Event", event);
         let response = JSON.parse(event);
-        if (response.length>0) {
-            this.getDocumentOnsuccessCallback(response[0].userprofile)
+        if (response.length > 0) {
+            this.setUserData(response[0].userprofile)
         }
-    };
-
-    onRepchange = (event) => {
-        console.log("Replicator change event", event);
     };
 
     selectpicture = () => {
@@ -255,38 +206,34 @@ export default class Profile extends React.Component {
         });
     }
 
-    
     syncStop = async () => {
 
-        //Stop replicator listener
-        var replistener = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
-        if (replistener != "Success")
-            alert("Error while logout", replistener)
-        else {
-
+        //Stop Replication Listeners
+        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
+        if (ReplicatorListenerResponse == "Success") {
             DeviceEventEmitter.removeAllListeners(this.state.jsrepListner);
-
-            //Stop Replicators
-            var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, this.state.ReplicatorID);
-            if (ReplicatorStopResposne != "Success")
-                alert("Error while logout", querylistener)
-
         }
 
-        //Stop Query Listener
-        var querylistener = await CouchbaseNativeModule.removeQueryChangeListener(this.state.dbname, this.state.queryStr);
-        if (querylistener != "Success")
-            alert("Error while logout", querylistener)
-        else {
-            DeviceEventEmitter.removeAllListeners(this.state.jsqueryListner);
 
-            //Close DB and Logout
-            this.logout();
+        //Stop Replicators
+        var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, this.state.ReplicatorID);
+        if (ReplicatorStopResposne != "Success") {
+            alert("Error while logout " + ReplicatorStopResposne)
+        } else {
+
+            //Stop Query Listener
+            var querylistener = await CouchbaseNativeModule.removeQueryChangeListener(this.state.dbname, this.state.queryStr);
+            if (querylistener != "Success")
+                alert("Error while logout " + querylistener)
+            else {
+                DeviceEventEmitter.removeAllListeners(this.state.jsqueryListner);
+
+                //Close DB and Logout
+                this.logout();
+            }
         }
-
 
     }
-
 
     logout = () => {
 
@@ -298,7 +245,6 @@ export default class Profile extends React.Component {
                 //close universities db
                 CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
                     this.props.navigation.goBack();
-
                 }, this.error_callback);
 
             }
@@ -320,19 +266,20 @@ export default class Profile extends React.Component {
 
                 <View style={whole.verticalLinearLayout}>
 
-                    <View>
-                        <Image style={whole.profileImage} source={this.state.imagepath}></Image>
+                    <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
 
-                        <Button
-                            title="Upload Photo"
-                            color="#E62125"
-                            style={whole.btnUpload}
-                            onPress={this.selectpicture}
-                        />
+                        <View>
+                            <Image style={whole.profileImage} source={this.state.imagepath}></Image>
 
-                    </View>
+                            <Button
+                                title="Upload Photo"
+                                color="#E62125"
+                                style={whole.btnUpload}
+                                onPress={this.selectpicture}
+                            />
 
-                    <View>
+                        </View>
+
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />

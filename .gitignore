@@ -19,3 +19,4 @@ Sync/android/.gradle/
 Sync/android/.idea/
 Sync/android/local.properties
 Sync/yarn-error.log
+*.lock

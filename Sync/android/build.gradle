@@ -38,7 +38,7 @@ allprojects {
         maven {
             url "https://mobile.maven.couchbase.com/maven2/dev/"
         }
-          google()
+        google()
         jcenter()
         flatDir {
             dirs 'libs'
