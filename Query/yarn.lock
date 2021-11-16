@@ -5364,6 +5364,12 @@ react-is@^16.13.0, react-is@^16.7.0, react-is@^16.8.1:
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
+"react-native-cblite@/Users/ramiz/Desktop/Couchbase/CB Android Native Module/couchbase-lite-react-native-module-android":
+  version "1.0.0"
+
+"react-native-cblite@file:../../../CB Android Native Module/couchbase-lite-react-native-module-android":
+  version "1.0.0"
+
 react-native-codegen@^0.0.6:
   version "0.0.6"
   resolved "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.0.6.tgz"

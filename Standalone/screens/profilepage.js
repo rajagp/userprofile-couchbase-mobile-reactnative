@@ -206,6 +206,8 @@ export default class Profile extends React.Component {
 
                 <View style={whole.verticalLinearLayout}>
 
+                    <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+
                     <View>
                         <Image style={whole.profileImage} source={this.state.imagepath}></Image>
 
@@ -218,13 +220,10 @@ export default class Profile extends React.Component {
 
                     </View>
 
-                    <View>
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
-                    </View>
-
-                    <View style={whole.centerLayoutProfile}>
+                        <View style={[whole.centerLayoutProfile]}>
                         <Button
                             title="Logout"
                             color="#E62125"
@@ -239,6 +238,9 @@ export default class Profile extends React.Component {
                             onPress={this.saveProfile}
                         />
                     </View>
+                    </View>
+
+                   
                 </View>
 
 

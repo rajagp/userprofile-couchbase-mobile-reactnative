@@ -30,12 +30,11 @@ allprojects {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
         }
-
+        maven {
+            url "https://mobile.maven.couchbase.com/maven2/dev/"
+        }
         google()
         jcenter()
-        flatDir {
-            dirs 'libs'
-        }
         maven { url 'https://www.jitpack.io' }
     }
 }

@@ -186,7 +186,7 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
-    implementation fileTree(dir: "libs", include: ["*.aar"])
+    implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta02'
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
