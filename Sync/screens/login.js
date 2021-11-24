@@ -15,6 +15,8 @@ export default class Login extends React.Component {
     state = {
         showpass: false,
         loading: false,
+        UniversitiesDBname: 'universities',
+        UniversitiesDBconfig: { Directory: RNFS.DocumentDirectoryPath + "/universitydatabase" }
     }
 
     constructor(props) {
@@ -27,6 +29,9 @@ export default class Login extends React.Component {
 
     async user_Login() {
 
+
+        this.startLoading();
+
         if ((this.state.username) && (this.state.password)) {
 
             let directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
@@ -38,7 +43,11 @@ export default class Login extends React.Component {
             CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, (SuccessResponse) => {
 
                 if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+
+                    CouchbaseNativeModule.CreateOrOpenDatabase(this.state.UniversitiesDBname, this.state.UniversitiesDBconfig, this.universities_dbcreated_success_callback, this.error_callback);
+
                     this.setupReplicator(dbName, this.state.username, this.state.password)
+
                 }
                 else {
                     alert("There was a problem while login.");
@@ -68,12 +77,12 @@ export default class Login extends React.Component {
 
         //Create Replicator
         let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
-        console.log("ReplicatorID",ReplicatorID);
+        console.log("ReplicatorID", ReplicatorID);
 
 
         //Add Replicator Listener
-        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname,ReplicatorID,"ReplicatorChangeEvent");
-        console.log("ReplicatorListenerResponse",ReplicatorListenerResponse);
+        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, "ReplicatorChangeEvent");
+        console.log("ReplicatorListenerResponse", ReplicatorListenerResponse);
 
 
 
@@ -83,11 +92,10 @@ export default class Login extends React.Component {
 
         if (startReplicatorResponse == "Success") {
             // Add Replicator ID
-            this.setState({ ReplicatorID },()=>
-            {
-                 this.loginSucess();
+            this.setState({ ReplicatorID }, () => {
+                this.loginSucess();
             });
-           
+
         }
         else {
             console.error("Replicator starting error", eror)
@@ -101,21 +109,13 @@ export default class Login extends React.Component {
 
         this.startLoading();
 
-        let newDirectory = RNFS.DocumentDirectoryPath + "/universitydatabase";
-        let newdbName = 'universities';
-        let newconfig = {
-            Directory: newDirectory
-        }
+        let newdbName = this.state.UniversitiesDBname;
+        let newconfig = this.state.UniversitiesDBconfig;
 
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
 
-        if (dbexists) {
-
-            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.universities_dbcreated_success_callback, this.error_callback);
-
-        }
-        else {
+        if (!dbexists) {
 
             //copy from assets to documents folder to perform copydatabase
             let assetsDBFileName = "universities.zip";
@@ -129,6 +129,9 @@ export default class Login extends React.Component {
             //copy database
             this.copyDatabase(dbTemp, newdbName, newconfig);
 
+        }
+        else {
+            this.dismissLoading();
         }
 
 
@@ -145,12 +148,8 @@ export default class Login extends React.Component {
         }
         CouchbaseNativeModule.copyDatabase(dbName, newdbName, config, newconfig,
             (SuccessResponse) => {
-                if (SuccessResponse == "Success") {
-
-                    CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.universities_dbcreated_success_callback, this.error_callback);
-
-                }
-                else {
+                this.dismissLoading();
+                if (SuccessResponse != "Success") {
                     alert("There was a problem while universities data setup.");
                 }
             }

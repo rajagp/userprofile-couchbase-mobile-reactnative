@@ -223,7 +223,7 @@ export default class Profile extends React.Component {
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
-                        <View style={[whole.centerLayoutProfile]}>
+                        <View style={whole.centerLayoutProfile}>
                         <Button
                             title="Logout"
                             color="#E62125"

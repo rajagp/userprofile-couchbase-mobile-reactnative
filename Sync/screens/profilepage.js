@@ -24,6 +24,7 @@ export default class Profile extends React.Component {
 
     state = {
         loaded: false,
+        syncOn: false,
         UserObject: {},
         replicators: [],
         jsrepListner: "ReplicatorChangeEvent",
@@ -50,9 +51,10 @@ export default class Profile extends React.Component {
                 university: userobj.university
             });
 
+
             if (userobj.image) {
 
-                CouchbaseNativeModule.getBlob(this.state.dbname, userobj.image, (imageBlob) => {
+                CouchbaseNativeModule.getBlob(this.state.dbname, JSON.stringify(userobj.image), (imageBlob) => {
 
                     const encodedBase64 = imageBlob;
                     let imageuri = { uri: `data:${userobj.image.content_type};base64,${encodedBase64}` }
@@ -86,7 +88,7 @@ export default class Profile extends React.Component {
             email: id,
             docid: docId,
             dbname: dbName,
-            ReplicatorID : replicatorID
+            ReplicatorID: replicatorID
         });
 
 
@@ -94,9 +96,9 @@ export default class Profile extends React.Component {
         DeviceEventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
 
         // Enable Logging (null = All Domains)
-        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "INFO")
+        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "DEBUG")
 
-        console.log("logging", loggingResponse);
+        console.log("Enable Logging :", loggingResponse);
 
 
         // Add Live Query
@@ -107,7 +109,14 @@ export default class Profile extends React.Component {
 
 
     OnReplicatorChanged = (event) => {
-        console.log("Replicator Change Event", event);
+        event = JSON.parse(event);
+        if (event.errorCode && event.errorCode == '10401' && event.status == 'stopped') {
+            alert('User is not authorized to sync with remote server. Check credentials and try again.')
+        } else if (event.errorCode == '111' && event.status == 'offline') {
+            alert('There was an error when attempting to sync with remote server. You can continue to use the app in standalone mode.')
+            this.syncStop(false)
+        }
+        console.log("Replicator Event :", event);
     }
 
     setupLiveQuery = async () => {
@@ -116,10 +125,12 @@ export default class Profile extends React.Component {
         this.setState({ queryStr });
 
         let queryResponse = await CouchbaseNativeModule.queryWithChangeListener(this.state.dbname, queryStr, this.state.jsqueryListner);
-        console.log("query", queryResponse)
+        console.log("Live Query :", queryResponse)
 
         if (queryResponse == "Success") {
             DeviceEventEmitter.addListener(this.state.jsqueryListner, this.onQueryUpdated);
+            this.setState({ syncOn: true });
+
         } else {
             alert("There was an issue while setting up sync")
         }
@@ -127,7 +138,7 @@ export default class Profile extends React.Component {
     }
 
     onQueryUpdated = (event) => {
-        console.log("Query Change Event", event);
+        console.log("Query Event :", event);
         let response = JSON.parse(event);
         if (response.length > 0) {
             this.setUserData(response[0].userprofile)
@@ -149,7 +160,7 @@ export default class Profile extends React.Component {
 
                 let image = response.assets[0].base64;
                 let mimagetype = response.assets[0].type;
-                console.log(image, mimagetype)
+
                 // You can also display the image using data:
                 this.setState({
                     imagepath: source,
@@ -178,10 +189,10 @@ export default class Profile extends React.Component {
         if (this.state.imagedata) {
             let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
             if (blob.length) {
-                data.image = blob;
+                data.image = JSON.parse(blob);
             }
         }
-        console.log("User profile data", data);
+        console.log("Saving user profile :", data);
         CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
             (error) => {
                 alert(error);
@@ -206,33 +217,55 @@ export default class Profile extends React.Component {
         });
     }
 
-    syncStop = async () => {
+    syncStop = async (logout) => {
 
-        //Stop Replication Listeners
-        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
-        if (ReplicatorListenerResponse == "Success") {
-            DeviceEventEmitter.removeAllListeners(this.state.jsrepListner);
+
+        if (!this.state.syncOn) {
+            this.stopliveQuery();
         }
+        else {
+
+            //Stop Replicators
+            var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, this.state.ReplicatorID);
+            console.log("Replicator Stop :", ReplicatorStopResposne);
+
+            if (ReplicatorStopResposne != "Success") {
+                alert("Error while logout " + ReplicatorStopResposne)
+            } else {
+
+                //Stop Replication Listeners
+                let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
+                console.log("Replicator Remove Listener :", ReplicatorListenerResponse);
+
+                if (ReplicatorListenerResponse == "Success") {
+                    DeviceEventEmitter.removeAllListeners(this.state.jsrepListner);
+
+                    if (logout)
+                        this.stopliveQuery();
+                    else
+                        this.setState({ syncOn: false })
+                }
 
 
-        //Stop Replicators
-        var ReplicatorStopResposne = await CouchbaseNativeModule.replicatorStop(this.state.dbname, this.state.ReplicatorID);
-        if (ReplicatorStopResposne != "Success") {
-            alert("Error while logout " + ReplicatorStopResposne)
-        } else {
-
-            //Stop Query Listener
-            var querylistener = await CouchbaseNativeModule.removeQueryChangeListener(this.state.dbname, this.state.queryStr);
-            if (querylistener != "Success")
-                alert("Error while logout " + querylistener)
-            else {
-                DeviceEventEmitter.removeAllListeners(this.state.jsqueryListner);
-
-                //Close DB and Logout
-                this.logout();
             }
         }
 
+    }
+
+    stopliveQuery = async () => {
+        //Stop Query Listener
+        var querylistener = await CouchbaseNativeModule.removeQueryChangeListener(this.state.dbname, this.state.queryStr);
+        console.log("Stop Query :", querylistener);
+
+        if (querylistener != "Success")
+            alert("Error while logout " + querylistener)
+        else {
+            DeviceEventEmitter.removeAllListeners(this.state.jsqueryListner);
+
+            //Close DB and Logout
+            this.logout();
+
+        }
     }
 
     logout = () => {
@@ -240,18 +273,25 @@ export default class Profile extends React.Component {
         //close userdb
         CouchbaseNativeModule.closeDatabase(this.state.dbname, (uDBsuccess) => {
 
+            console.log("Close UserDB :", uDBsuccess);
             if (uDBsuccess == "Success") {
 
                 //close universities db
                 CouchbaseNativeModule.closeDatabase('universities', (uniDBSuccess) => {
-                    this.props.navigation.goBack();
-                }, this.error_callback);
+
+                    if (uniDBSuccess == "Success") {
+                        this.props.navigation.goBack();
+                    }else{
+                        console.log("uniDB close :" + uniDBSuccess);
+                    }
+
+                }, (err) => { console.log("uniDB close :" + err); });
 
             }
             else {
                 this.error_callback();
             }
-        }, this.error_callback);
+        }, (err) => { console.log("univerisities " + err); })// this.error_callback);
 
 
     }
@@ -286,22 +326,23 @@ export default class Profile extends React.Component {
                         <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
                             <Text>{this.state.university ? this.state.university : "Select University"}</Text><Text>{">"}</Text>
                         </TouchableOpacity>
+                        <View style={whole.centerLayoutProfile}>
+                            <Button
+                                title="Logout"
+                                color="#E62125"
+                                style={whole.button}
+                                onPress={() => this.syncStop(true)} />
+
+                            <Button
+                                title="Save"
+                                color="#888"
+                                style={whole.button}
+                                onPress={this.saveProfile}
+                            />
+                        </View>
                     </View>
 
-                    <View style={whole.centerLayoutProfile}>
-                        <Button
-                            title="Logout"
-                            color="#E62125"
-                            style={whole.button}
-                            onPress={this.syncStop} />
 
-                        <Button
-                            title="Save"
-                            color="#888"
-                            style={whole.button}
-                            onPress={this.saveProfile}
-                        />
-                    </View>
                 </View>
 
 

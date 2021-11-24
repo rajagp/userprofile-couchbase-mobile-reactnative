@@ -7,6 +7,7 @@ buildscript {
         compileSdkVersion = 29
         targetSdkVersion = 29
         ndkVersion = "20.1.5948944"
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0-beta02'
     }
     repositories {
         google()

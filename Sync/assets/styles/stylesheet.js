@@ -23,11 +23,12 @@ const whole = StyleSheet.create({
     width: 50
   },
   centerLayoutProfile: {
+    margin: 20,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    justifyContent: 'space-between',
-    width: "50%"
+    alignContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    justifyContent: 'space-evenly'
   },
   logoImage: {
     width: wp('50%'),
@@ -73,21 +74,21 @@ const whole = StyleSheet.create({
   },
   listitem: {
     borderBottomColor: "#ccc",
-    width:wp("100%"),
-    padding:10,
+    width: wp("100%"),
+    padding: 10,
     borderBottomWidth: 1
-  }, 
+  },
   listMainText: {
-    color:"#000",
-    fontSize:14
+    color: "#000",
+    fontSize: 14
   },
   listDescriptionText: {
-    color:"#888",
-    fontSize:12
+    color: "#888",
+    fontSize: 12
   },
   listlinkText: {
-    color:"#ccc",
-    fontSize:12
+    color: "#ccc",
+    fontSize: 12
   },
   mselectinput: {
     height: 40,
