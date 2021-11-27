@@ -1,4 +1,4 @@
-package com.userprofiledemo;
+package com.userprofiledemo.sync;
 
 import com.facebook.react.ReactActivity;
 

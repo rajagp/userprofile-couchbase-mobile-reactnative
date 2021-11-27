@@ -1,4 +1,4 @@
-package com.userprofiledemo;
+package com.userprofiledemo.query;
 
 import android.app.Application;
 import android.content.Context;
