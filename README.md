@@ -7,13 +7,17 @@ The app uses a reference implementation of React Native Module that exposes a su
 # standalone
 This version of app demonstrates basic Database and Document CRUD operations using Couhbase Lite as a standalone, embedded database within your mobile app. A document is created and stored in a "user" Couchbase Lite database.
 
+For details, refer to the README in the "standalone" folder of the repo.
 
 # query
 This version of app extends the "standalone" version of the app and demonstrates basic query and full-text-search operations against Couhbase Lite database. In addition to the "user" database, this version of the app is bundled with a second "university" database pre-seeded with documents against which queries are issued.
 
+For details, refer to the README in the "query" folder of the repo.
+
 # sync
 This version of app extends the "query" version of the app and demonstrates basic database sync functionality. The app supports bi-directional sync with a remote Couchbase Server database through a Sync Gateway.
 
+For details, refer to the README in the "sync" folder of the repo.
 
 # Getting Started
 
