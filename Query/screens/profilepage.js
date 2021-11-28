@@ -125,13 +125,12 @@ export default class Profile extends React.Component {
                 const source = { uri: response.assets[0].uri };
 
                 let image = response.assets[0].base64;
-                let _imagetype = response.assets[0].type;
-                //  console.log(image,imagetype)
-                // You can also display the image using data:
+                let imagetype = response.assets[0].type;
+                // You can also displ   ay the image using data:
                 this.setState({
                     imagepath: source,
                     imagedata: image,
-                    imagetype: _imagetype,
+                    imagetype,
                 });
 
             }
@@ -157,6 +156,7 @@ export default class Profile extends React.Component {
                 data.image = blob;
             }
         }
+        console.log("User profile data", data);
         CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
             (error) => {
                 alert(error);
@@ -226,41 +226,45 @@ export default class Profile extends React.Component {
 
                 <View style={whole.verticalLinearLayout}>
 
-                    <View>
-                        <Image style={whole.profileImage} source={this.state.imagepath}></Image>
 
-                        <Button
-                            title="Upload Photo"
-                            color="#E62125"
-                            style={whole.btnUpload}
-                            onPress={this.selectpicture}
-                        />
 
-                    </View>
+                    <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
 
-                    <View>
+                        <View>
+                            <Image style={whole.profileImage} source={this.state.imagepath}></Image>
+
+                            <Button
+                                title="Upload Photo"
+                                color="#E62125"
+                                style={whole.btnUpload}
+                                onPress={this.selectpicture}
+                            />
+
+                        </View>
+
                         <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
                         <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
                             <Text>{this.state.university ? this.state.university : "Select University"}</Text><Text>{">"}</Text>
                         </TouchableOpacity>
+                        <View style={whole.centerLayoutProfile}>
+                            <Button
+                                title="Logout"
+                                color="#E62125"
+                                style={whole.button}
+                                onPress={this.logout} />
+
+                            <Button
+                                title="Save"
+                                color="#888"
+                                style={whole.button}
+                                onPress={this.saveProfile}
+                            />
+                        </View>
                     </View>
 
-                    <View style={whole.centerLayoutProfile}>
-                        <Button
-                            title="Logout"
-                            color="#E62125"
-                            style={whole.button}
-                            onPress={this.logout} />
 
-                        <Button
-                            title="Save"
-                            color="#888"
-                            style={whole.button}
-                            onPress={this.saveProfile}
-                        />
-                    </View>
                 </View>
 
 

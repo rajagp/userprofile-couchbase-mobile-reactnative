@@ -12,4 +12,11 @@ Query/android/app/build
 Query/android/.gradle/
 Query/android/.idea/
 Query/android/local.properties
-
+Sync/node_modules/
+Sync/android/app/libs/
+Sync/android/app/build
+Sync/android/.gradle/
+Sync/android/.idea/
+Sync/android/local.properties
+Sync/yarn-error.log
+*.lock

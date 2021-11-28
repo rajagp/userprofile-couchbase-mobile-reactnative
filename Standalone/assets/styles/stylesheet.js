@@ -23,11 +23,12 @@ const whole = StyleSheet.create({
      width: 50
   },
   centerLayoutProfile: {
+    margin: 20,
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignSelf: 'center',
-    justifyContent: 'space-between', 
-    width: "50%" 
+    alignContent: 'center',
+    alignItems: 'center',
+    width: '50%',
+    justifyContent: 'space-evenly'
   },
   logoImage: {
     width: wp('50%'),

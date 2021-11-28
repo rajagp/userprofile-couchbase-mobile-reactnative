@@ -41,7 +41,7 @@ export default class Login extends React.Component {
 
     userdb_success_callback = (SuccessResponse) => {
 
-
+        console.log("User DB Open", SuccessResponse)
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
             this.checkCopyDatabase();
         }
@@ -62,7 +62,7 @@ export default class Login extends React.Component {
 
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
-        
+
 
         if (dbexists) {
 
@@ -79,7 +79,7 @@ export default class Login extends React.Component {
 
             await RNFS.copyFileAssets(zipfile[0].path, tempDestination);
             await unzip(tempDestination, dbTemp);
-
+            console.log("Db copied from assets");
             //copy database
             this.copyDatabase(dbTemp, newdbName, newconfig);
 
@@ -113,14 +113,14 @@ export default class Login extends React.Component {
     }
 
     universities_dbcreated_success_callback = (SuccessResponse) => {
-
+        console.log("Universities database opened", SuccessResponse)
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
             let indexExpressions = ['name', 'location'];
             let indexName = "nameLocationIndex";
 
             var indexResponse = CouchbaseNativeModule.createValueIndex(this.state.dbname, indexName, indexExpressions);
-
+            console.log("Create index", indexResponse)
             if (indexResponse == "Success") {
                 this.dismissLoading();
                 this.props.navigation.navigate('profilescreen', { username: this.state.username });
