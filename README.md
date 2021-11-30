@@ -119,7 +119,6 @@ allprojects {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation files('com.couchbase.couchbase-lite-android-ee-3.0.0')
-
 }
 ```
 
@@ -134,6 +133,22 @@ Follow the instructions in [Couchbase Lite Android Getting Started Guides](https
     implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
  }
 ```
+
+- In your 'project' level `build.gradle` file, add your library file path. 
+ ```
+ buildscript {
+    ...
+    ext {
+        ...
+        // Add this line
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
+        ...
+        }
+    ...
+}
+
+```
+
 
 ##  Running the App
 Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
