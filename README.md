@@ -65,7 +65,36 @@ We discuss the steps to add the Couchbase Lite framework dependency depending on
 
 * Open the Android project located inside your React Native project under directory: `/path/to/userprofile-couchbase-mobile-reactnative-android/android` using Android Studio.
 
-**Option1: To add couchbase-lite-android as an .aar file**
+
+
+**Option1: Include couchbase-lite-android sdk from maven**
+
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
+
+- In your 'project' level `build.gradle` file, add your library file path. 
+ ```
+ buildscript {
+    ...
+    ext {
+        ...
+        // Add this line
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
+        ...
+        }
+    ...
+}
+
+```
+
+
+**Option2: To add couchbase-lite-android as an .aar file**
 
 * Create a a new directory called 'libs' under your "**/path/to/userprofile-couchbase-mobile-reactnative-android/android/app**" folder
 * Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
@@ -122,32 +151,6 @@ dependencies {
 }
 ```
 
-
-**Option2: Include couchbase-lite-android sdk from maven**
-
-Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
-
-- In your 'app' level `build.gradle` file, add your library file path. 
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
-
-- In your 'project' level `build.gradle` file, add your library file path. 
- ```
- buildscript {
-    ...
-    ext {
-        ...
-        // Add this line
-        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
-        ...
-        }
-    ...
-}
-
-```
 
 
 ##  Running the App
