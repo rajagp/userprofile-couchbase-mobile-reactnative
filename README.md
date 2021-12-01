@@ -1,6 +1,6 @@
 # Overview
 Example of a simple React Native app on Android that uses Couchbase Lite as embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
-The app uses a reference implementation of React Native Module that exposes a subset of couchbase lite APIs.
+The app uses a [reference implementation of React Native Module](https://github.com/rajagp/couchbase-lite-react-native-module) that exposes a subset of couchbase lite APIs.
 
 LICENSE: The source code for the app is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
 
@@ -71,7 +71,35 @@ We discuss the steps to add the Couchbase Lite framework dependency depending on
 
 * Open the Android project located inside your React Native project under directory: `/path/to/userprofile-couchbase-mobile-reactnative-android/android` using Android Studio.
 
-**Option1: To add couchbase-lite-android as an .aar file**
+
+**Option1: Include couchbase-lite-android sdk from maven**
+
+Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
+
+- In your 'app' level `build.gradle` file, add your library file path. 
+ ```
+ dependencies {
+    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
+ }
+```
+
+
+- In your 'project' level `build.gradle` file, add your library file path. 
+
+```
+ buildscript {
+    ...
+    ext {
+        ...
+        // Add this line
+        cblVersion = 'com.couchbase.lite:couchbase-lite-android:${version}'
+        ...
+        }
+    ...
+}
+```
+
+**Option2: To add couchbase-lite-android as an .aar file**
 
 * Create a a new directory called 'libs' under your "**/path/to/userprofile-couchbase-mobile-reactnative-android/android/app**" folder
 * Copy the .aar files from within your downloaded Couchbase Lite package into the newly created'libs' folder
@@ -128,19 +156,6 @@ dependencies {
 
 }
 ```
-
-
-**Option2: Include couchbase-lite-android sdk from maven**
-
-Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
-
-- In your 'app' level `build.gradle` file, add your library file path. 
- ```
- dependencies {
-    implementation 'com.couchbase.lite:couchbase-lite-android:${version}'
- }
-```
-
 ##  Running the App
 Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
 
