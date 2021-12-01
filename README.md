@@ -2,6 +2,8 @@
 Example of a simple React Native app on Android that uses Couchbase Lite as embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
 The app uses a reference implementation of React Native Module that exposes a subset of couchbase lite APIs.
 
+LICENSE: The source code for the app is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
+
 # Folder Overview
 
 # standalone
