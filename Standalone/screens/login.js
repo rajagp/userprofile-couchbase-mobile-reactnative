@@ -1,10 +1,10 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, View, Button, Image, TextInput } from 'react-native';
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite';
+import * as Cblite from 'react-native-cblite';
 import * as RNFS from 'react-native-fs';
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 export default class Login extends React.Component {
 
     static navigationOptions = {
@@ -54,7 +54,6 @@ export default class Login extends React.Component {
             let config = {
                 Directory: _directory,
             }
-
             CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.success_callback, this.error_callback);
         }
         else {
@@ -74,7 +73,7 @@ export default class Login extends React.Component {
                 <View style={whole.verticalLinearLayout}>
 
                     <View style={whole.main} >
-                        <Image style={whole.logoImage} source={require('../assets/img/logo.png')}></Image>
+                        <Image style={whole.logoImage} resizeMode='contain' source={require('../assets/img/logo.png')}></Image>
                     </View>
 
                     <View>

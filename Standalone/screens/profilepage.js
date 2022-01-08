@@ -2,7 +2,8 @@ import React from 'react';
 import { SafeAreaView, StatusBar, DeviceEventEmitter, View, Button, Image, TextInput } from 'react-native';
 import { whole } from '../assets/styles/stylesheet'
 import { launchImageLibrary } from 'react-native-image-picker';
-import CbliteAndroid from 'react-native-cblite';
+import * as Cblite from 'react-native-cblite';
+import * as RNFS from 'react-native-fs';
 
 const options = {
     title: 'Select image',
@@ -13,7 +14,7 @@ const options = {
     includeBase64: true
 };
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 
 export default class Profile extends React.Component {
 
@@ -67,12 +68,13 @@ export default class Profile extends React.Component {
     }
 
     getDocumentOnerrorCallback = (errorResponse) => {
+        console.log(errorResponse)
         if (!errorResponse == "Document not found") {
             alert("There was a problem while fetching the user data. Details : " + errorResponse);
         }
     }
 
-    componentDidMount = () => {
+    componentDidMount = async () => {
 
         //setup
         var id = this.props.navigation.state.params.username;
@@ -84,13 +86,13 @@ export default class Profile extends React.Component {
             docid: docId,
             dbname: dbName
         });
-
-        CouchbaseNativeModule.getDocument(dbName, docId, this.getDocumentOnsuccessCallback, this.getDocumentOnerrorCallback);
+       
+       CouchbaseNativeModule.getDocument(dbName, docId, this.getDocumentOnsuccessCallback, this.getDocumentOnerrorCallback);
 
 
         //add listeners
         var jsListner = "DatabaseChangeEvent";
-        var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
+        var x = await CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
         console.log("Add Listner :", x);
         if (x == "Success") {
             //start listening
@@ -99,14 +101,11 @@ export default class Profile extends React.Component {
 
 
     }
-
+    
     onDbchange = (event) => {
         if (event.Modified) {
             var docIds = Object.keys(event.Modified);
             var docs = Object.values(event.Modified);
-            // console.warn("Event", "Modified");
-            // console.warn("Docid", docIds[0]);
-            // console.warn("Doc", docs[0]);
         }
     };
 
@@ -125,6 +124,8 @@ export default class Profile extends React.Component {
 
                 let image = response.assets[0].base64;
                 let _imagetype = response.assets[0].type;
+
+              
                 //  console.log(image,imagetype)
                 // You can also display the image using data:
                 this.setState({
@@ -138,7 +139,7 @@ export default class Profile extends React.Component {
 
     }
 
-    saveProfile = () => {
+    saveProfile = async () => {
 
         var data = this.state.UserObject;
         data.type = "user";
@@ -146,13 +147,17 @@ export default class Profile extends React.Component {
         data.address = this.state.address;
 
         if (this.state.imagedata) {
-            let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
+            let blob = await CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
             if (blob.length) {
                 data.image = blob;
             }
+            console.log(blob)
         }
+        console.log(this.state.dbname, this.state.docid, JSON.stringify(data))
         CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data),this.OnSetDocSuccess,
-        (error) => { alert(error); 
+        (error) => { 
+            console.log(JSON.stringify(error.userInfo))
+            alert(JSON.stringify(error)); 
         });
 
     }
@@ -174,20 +179,21 @@ export default class Profile extends React.Component {
 
 
 
-    logout = () => {
+    logout = async () => {
 
         //remove listners
-        var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
-        if (removeListnerResponse == "Success") {
+         var removeListnerResponse = await CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
+         if (removeListnerResponse == "Success") {
 
-            //stop listeneing
+        //     //stop listeneing
              DeviceEventEmitter.removeAllListeners('OnDatabaseChange');
              CouchbaseNativeModule.closeDatabase(this.state.dbname,(uDBsuccess)=>{
                 if (uDBsuccess == "Success") {
                     this.props.navigation.goBack();
                 }
              },(error)=>{
-                alert("Logout failed, please try again.")
+                 console.log(JSON.stringify(error))
+                alert(JSON.stringify(error),"Logout failed, please try again.")
              });
              
              
