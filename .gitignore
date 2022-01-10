@@ -24,3 +24,6 @@ Sync/android/.idea/
 Sync/android/local.properties
 Sync/yarn-error.log
 *.lock
+Standalone/package.json
+Standalone/yarn.lock
+Standalone/ios/userprofiledemo.xcworkspace/xcshareddata/swiftpm/Package.resolved

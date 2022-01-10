@@ -92,7 +92,7 @@ export default class Profile extends React.Component {
 
         //add listeners
         var jsListner = "DatabaseChangeEvent";
-        var x = await CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
+        var x =  CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
         console.log("Add Listner :", x);
         if (x == "Success") {
             //start listening
@@ -139,7 +139,7 @@ export default class Profile extends React.Component {
 
     }
 
-    saveProfile = async () => {
+    saveProfile = () => {
 
         var data = this.state.UserObject;
         data.type = "user";
@@ -147,7 +147,7 @@ export default class Profile extends React.Component {
         data.address = this.state.address;
 
         if (this.state.imagedata) {
-            let blob = await CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
+            let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
             if (blob.length) {
                 data.image = blob;
             }
@@ -179,10 +179,10 @@ export default class Profile extends React.Component {
 
 
 
-    logout = async () => {
+    logout = () => {
 
         //remove listners
-         var removeListnerResponse = await CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
+         var removeListnerResponse = CouchbaseNativeModule.removeDatabaseChangeListener(this.state.dbname);
          if (removeListnerResponse == "Success") {
 
         //     //stop listeneing
