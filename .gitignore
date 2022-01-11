@@ -27,3 +27,4 @@ Sync/yarn-error.log
 Standalone/package.json
 Standalone/yarn.lock
 Standalone/ios/userprofiledemo.xcworkspace/xcshareddata/swiftpm/Package.resolved
+Query/ios/Pods/

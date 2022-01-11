@@ -77,8 +77,8 @@ export default class Login extends React.Component {
                     </View>
 
                     <View>
-                        <TextInput placeholder="Email" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
-                        <TextInput placeholder="Password" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
+                        <TextInput placeholder="Email" autoCapitalize="none" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
+                        <TextInput placeholder="Password" autoCapitalize="none" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
                     </View>
 
                     <Button

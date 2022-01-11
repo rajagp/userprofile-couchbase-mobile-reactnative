@@ -2,7 +2,7 @@ import React from 'react'
 import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
 import { launchImageLibrary } from 'react-native-image-picker'
-import CbliteAndroid from 'react-native-cblite'
+import * as Cblite from 'react-native-cblite';
 
 const options = {
     title: 'Select image',
@@ -13,7 +13,7 @@ const options = {
     includeBase64: true
 };
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 
 export default class Profile extends React.Component {
 
@@ -246,18 +246,18 @@ export default class Profile extends React.Component {
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
                         <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
-                            <Text>{this.state.university ? this.state.university : "Select University"}</Text><Text>{">"}</Text>
+                            <Text numberOfLines={1}>{this.state.university ? this.state.university : "Select University"}</Text><Text style={{color:'#E62125'}}>{">"}</Text>
                         </TouchableOpacity>
                         <View style={whole.centerLayoutProfile}>
                             <Button
                                 title="Logout"
-                                color="#E62125"
+                                color="#888"
                                 style={whole.button}
                                 onPress={this.logout} />
 
                             <Button
                                 title="Save"
-                                color="#888"
+                                color="#E62125"
                                 style={whole.button}
                                 onPress={this.saveProfile}
                             />
