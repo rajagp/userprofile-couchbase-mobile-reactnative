@@ -63,6 +63,7 @@ export default class Login extends React.Component {
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
 
+        console.log(dbexists,"uni dbexists")
 
         if (dbexists) {
 
@@ -153,6 +154,7 @@ export default class Login extends React.Component {
 
     dbexists_success_callback = (SuccessResponse) => {
 
+        console.log(SuccessResponse,"uni db")
 
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 

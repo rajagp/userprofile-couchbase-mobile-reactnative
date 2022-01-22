@@ -49,7 +49,7 @@ export default class Login extends React.Component {
 
         if ((this.state.username) && (this.state.password)) {
 
-            let _directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
+            let _directory = RNFS.CachesDirectoryPath + "/" + this.state.username;
             let dbName = 'userprofile';
             let config = {
                 Directory: _directory,

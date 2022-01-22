@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/Cellar/node/14.4.0/bin/node /usr/local/bin/yarn add /Users/ramiz/Desktop/react-native-cblite
+  /usr/local/Cellar/node/14.4.0/bin/node /usr/local/bin/yarn remove react-native-cblite
 
 PATH: 
   /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/Apple/usr/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: EACCES: permission denied, unlink '/Users/ramiz/Desktop/Couchbase/CB-Android-React-App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/@react-native-community/cli/node_modules/ansi-regex/index.js'
+  Error: EACCES: permission denied, unlink '/Users/ramiz/Desktop/Couchbase/CB-Android-React-App/userprofile-couchbase-mobile-reactnative-android/Standalone/node_modules/.bin/acorn'
 
 npm manifest: 
   {
@@ -31,7 +31,6 @@ npm manifest:
     "dependencies": {
       "react": "17.0.1",
       "react-native": "0.64.2",
-      "react-native-eject": "^0.1.2",
       "react-native-fs": "^2.18.0",
       "react-native-gesture-handler": "^1.10.3",
       "react-native-image-picker": "^4.0.5",
@@ -5323,11 +5322,6 @@ Lockfile:
       flow-parser "^0.121.0"
       jscodeshift "^0.11.0"
       nullthrows "^1.1.1"
-  
-  react-native-eject@^0.1.2:
-    version "0.1.2"
-    resolved "https://registry.yarnpkg.com/react-native-eject/-/react-native-eject-0.1.2.tgz#5824c332d092d845b1a77766c81023fa3c97bfd5"
-    integrity sha512-ITuAYOLMOiSXNAjWeucQPm5i6VVweuh/Zo2gfMFSCf1DjVrdOocWwy2kkg65ypbbt26tW6Vd3ZrqNRCsC9rqDA==
   
   react-native-fs@^2.18.0:
     version "2.18.0"
