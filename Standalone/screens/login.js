@@ -51,10 +51,9 @@ export default class Login extends React.Component {
 
             let _directory = RNFS.CachesDirectoryPath + "/" + this.state.username;
             let dbName = 'userprofile';
-            let config = {
-                Directory: _directory,
-            }
+            let config = { Directory: _directory, }
             CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.success_callback, this.error_callback);
+        
         }
         else {
             alert("Please enter Username and Password.");

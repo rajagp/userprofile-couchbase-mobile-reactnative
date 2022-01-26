@@ -3,7 +3,7 @@ import { SafeAreaView, StatusBar, DeviceEventEmitter, View, Button, Image, TextI
 import { whole } from '../assets/styles/stylesheet'
 import { launchImageLibrary } from 'react-native-image-picker';
 import * as Cblite from 'react-native-cblite';
-import * as RNFS from 'react-native-fs';
+
 
 const options = {
     title: 'Select image',

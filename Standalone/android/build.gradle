@@ -35,6 +35,7 @@ allprojects {
         maven {
             url "https://mobile.maven.couchbase.com/maven2/dev/"
         }
+        mavenCentral()
         google()
         jcenter()
         maven { url 'https://www.jitpack.io' }

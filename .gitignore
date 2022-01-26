@@ -26,5 +26,7 @@ Sync/yarn-error.log
 *.lock
 Standalone/package.json
 Standalone/yarn.lock
-Standalone/ios/userprofiledemo.xcworkspace/xcshareddata/swiftpm/Package.resolved
+Standalone/ios/userprofiledemo.xcworkspace
+Query/ios/userprofiledemo.xcworkspace
 Query/ios/Pods/
+Query/android/app/src/debug/
