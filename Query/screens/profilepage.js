@@ -92,7 +92,7 @@ export default class Profile extends React.Component {
         //add listeners
         var jsListner = "DatabaseChangeEvent";
         var x = CouchbaseNativeModule.addDatabaseChangeListener(dbName, jsListner);
-        console.log("Add Listner :", x);
+        console.log("Add Listner:", x);
         if (x == "Success") {
             //start listening
             DeviceEventEmitter.addListener(jsListner, this.onDbchange);
