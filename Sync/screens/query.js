@@ -1,12 +1,12 @@
 import React from 'react'
 import { SafeAreaView, Text, ActivityIndicator, FlatList, StatusBar, View, TextInput, Button } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite'
+import * as Cblite from 'react-native-cblite';
 import { SearchBar } from 'react-native-elements'
 import { TouchableOpacity } from 'react-native'
 
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 export default class Query extends React.Component {
 
 
@@ -59,13 +59,14 @@ export default class Query extends React.Component {
         let queryStr = "SELECT * FROM universities WHERE " + whereExpr;
         
         CouchbaseNativeModule.query(this.state.dbname, queryStr, (response) => {
-
+           
             if (response != null) {
                 if (response.length > 0) {
                     this.setState({ dataArray: JSON.parse(response) });
                 }
                 this.dismissLoading();
             }
+            
         }, this.error_callback);
 
 
@@ -90,6 +91,7 @@ export default class Query extends React.Component {
                     <View style={whole.searchHeader}>
                         <SearchBar lightTheme autoFocus placeholder="Name" keyboardType='default' onChangeText={(searchText) => this.setState({ searchText })} value={this.state.searchText} />
                         <SearchBar lightTheme placeholder="Country (optional)" onChangeText={(countrySearchText) => this.setState({ countrySearchText })} value={this.state.countrySearchText} />
+                        
                         <Button
                             title="Search"
                             color="#E62125"

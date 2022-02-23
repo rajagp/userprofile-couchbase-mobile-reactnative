@@ -1,11 +1,11 @@
 import React from 'react'
-import { SafeAreaView, ActivityIndicator, StatusBar, View, Button, Image, TextInput } from 'react-native'
+import { SafeAreaView, ActivityIndicator, StatusBar, View, Button, Image, TextInput, Platform } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite'
+import * as Cblite from 'react-native-cblite';
 import * as RNFS from 'react-native-fs'
-import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
+import { unzip } from 'react-native-zip-archive'
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 export default class Login extends React.Component {
 
     static navigationOptions = {
@@ -15,6 +15,8 @@ export default class Login extends React.Component {
     state = {
         showpass: false,
         loading: false,
+        username: '',
+        password: '',
         UniversitiesDBname: 'universities',
         UniversitiesDBconfig: { Directory: RNFS.DocumentDirectoryPath + "/universitydatabase" }
     }
@@ -24,6 +26,10 @@ export default class Login extends React.Component {
     }
 
     componentDidMount() {
+        // Enable Logging (null = All Domains)
+        var loggingResponse = CouchbaseNativeModule.enableConsoleLogging("replicator", "verbose")
+        console.log("Enable Logging :", loggingResponse);
+
         this.checkUniversitiesDBCopy();
     }
 
@@ -34,7 +40,7 @@ export default class Login extends React.Component {
 
         if ((this.state.username) && (this.state.password)) {
 
-            let directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
+            let directory = RNFS.CachesDirectoryPath + "/" + this.state.username;
             let dbName = 'userprofile';
             let config = {
                 Directory: directory,
@@ -51,12 +57,14 @@ export default class Login extends React.Component {
                 }
                 else {
                     alert("There was a problem while login.");
+                    this.dismissLoading()
                 }
 
             }, this.error_callback);
         }
         else {
             alert("Please enter Username and Password.");
+            this.dismissLoading()
         }
     }
 
@@ -64,25 +72,37 @@ export default class Login extends React.Component {
 
         this.startLoading();
 
-        var config = {
-            databaseName: dbname,
-            continuous: true,
-            target: "ws://10.0.2.2:4984/userprofile",
-            authenticator: {
-                authType: "Basic",
-                username: authUsername,
-                password: authpassword
+        var config;
+        if (Platform.OS == "ios") {
+            config = {
+                databaseName: dbname,
+                continuous: true,
+                target: "ws://127.0.0.1:4984/userprofile",
+                authenticator: {
+                    authType: "Basic",
+                    username: authUsername,
+                    password: authpassword
+                },
+            }
+        } else {
+            config = {
+                databaseName: dbname,
+                continuous: true,
+                target: "ws://10.0.2.2:4984/userprofile",
+                authenticator: {
+                    authType: "Basic",
+                    username: authUsername,
+                    password: authpassword
+                },
             }
         }
-
         //Create Replicator
         let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
         console.log("ReplicatorID", ReplicatorID);
 
-
         //Add Replicator Listener
-        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddListener(dbname, ReplicatorID, "ReplicatorChangeEvent");
-        console.log("ReplicatorListenerResponse", ReplicatorListenerResponse);
+        let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationAddChangeListener(dbname, ReplicatorID, "ReplicatorChangeEvent");
+        console.log("Replicator Listener Response", ReplicatorListenerResponse);
 
 
 
@@ -98,40 +118,62 @@ export default class Login extends React.Component {
 
         }
         else {
-            console.error("Replicator starting error", eror)
+            console.error("Replicator starting error:", startReplicatorResponse)
         }
-
 
     }
 
 
     async checkUniversitiesDBCopy() {
-
         this.startLoading();
 
-        let newdbName = this.state.UniversitiesDBname;
-        let newconfig = this.state.UniversitiesDBconfig;
+        let newDirectory = RNFS.DocumentDirectoryPath + "/universitydatabase";
+        let newdbName = 'universities';
+        let newconfig = {
+            Directory: newDirectory
+        }
 
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
 
-        if (!dbexists) {
+        console.log("Universities db exists:", dbexists)
 
-            //copy from assets to documents folder to perform copydatabase
-            let assetsDBFileName = "universities.zip";
-            let tempDestination = `${RNFS.CachesDirectoryPath}/${assetsDBFileName}`;
-            let dbTemp = `${RNFS.CachesDirectoryPath}/temp/`;
-            let zipfile = await RNFS.readDirAssets("db");
+        if (dbexists) {
 
-            await RNFS.copyFileAssets(zipfile[0].path, tempDestination);
-            await unzip(tempDestination, dbTemp);
-
-            //copy database
-            this.copyDatabase(dbTemp, newdbName, newconfig);
+            CouchbaseNativeModule.CreateOrOpenDatabase(newdbName, newconfig, this.dbexists_success_callback, this.error_callback);
 
         }
         else {
-            this.dismissLoading();
+
+
+            if (Platform.OS == 'ios') {
+                //copy from assets to documents folder to perform copydatabase
+                let assetsDBFileName = "universities.zip";
+                let dbTemp = `${RNFS.DocumentDirectoryPath}/temp/`;
+                let zipfile = `${RNFS.MainBundlePath}/${assetsDBFileName}`;
+                console.log(zipfile);
+
+                await unzip(zipfile, dbTemp);
+                console.log("Db copied from assets");
+                //copy database
+                this.copyDatabase(dbTemp, newdbName, newconfig);
+            }
+            else {
+
+                //copy from assets to documents folder to perform copydatabase
+                let assetsDBFileName = "universities.zip";
+                let tempDestination = `${RNFS.CachesDirectoryPath}/${assetsDBFileName}`;
+                let dbTemp = `${RNFS.CachesDirectoryPath}/temp/`;
+                let zipfile = await RNFS.readDirAssets("db");
+
+                await RNFS.copyFileAssets(zipfile[0].path, tempDestination);
+                await unzip(tempDestination, dbTemp);
+                console.log("Db copied from assets");
+                //copy database
+                this.copyDatabase(dbTemp, newdbName, newconfig);
+
+            }
+
         }
 
 
@@ -165,7 +207,7 @@ export default class Login extends React.Component {
             let indexName = "nameLocationIndex";
 
             var indexResponse = CouchbaseNativeModule.createValueIndex(this.state.dbname, indexName, indexExpressions);
-            console.log(indexResponse);
+            console.log("Creating Indexes : " + indexResponse);
 
             if (indexResponse != "Success") {
                 alert("Failed to load Universities data.");
@@ -178,7 +220,18 @@ export default class Login extends React.Component {
         }
 
     }
+    dbexists_success_callback = (SuccessResponse) => {
 
+        console.log("Open universities db:", SuccessResponse)
+
+        if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
+
+            this.dismissLoading();
+        }
+        else {
+            alert("Failed to load Universities data.");
+        }
+    }
 
     loginSucess = () => {
         this.dismissLoading();
@@ -206,6 +259,7 @@ export default class Login extends React.Component {
 
 
 
+
     render() {
 
         return (
@@ -221,8 +275,8 @@ export default class Login extends React.Component {
                     </View>
 
                     <View>
-                        <TextInput placeholder="Email" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
-                        <TextInput placeholder="Password" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
+                        <TextInput editable={true} placeholder="Email" autoCapitalize="none" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
+                        <TextInput placeholder="Password" autoCapitalize="none" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
                     </View>
 
                     <Button

@@ -30,3 +30,6 @@ Standalone/ios/userprofiledemo.xcworkspace
 Query/ios/userprofiledemo.xcworkspace
 Query/ios/Pods/
 Query/android/app/src/debug/
+Sync/ios/Pods/
+Sync/ios/userprofiledemo.xcworkspace
+Sync/package-lock.json
