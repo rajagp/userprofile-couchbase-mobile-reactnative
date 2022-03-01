@@ -1,5 +1,5 @@
 import React from 'react'
-import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter,NativeEventEmitter, View, Button, Image, TextInput } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter, NativeEventEmitter, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
 import { launchImageLibrary } from 'react-native-image-picker'
 import * as Cblite from 'react-native-cblite';
@@ -53,9 +53,8 @@ export default class Profile extends React.Component {
             });
 
             if (userobj.image) {
-
-                CouchbaseNativeModule.getBlob(this.state.dbname, userobj.image, (imageBlob) => {
-
+                CouchbaseNativeModule.getBlob(this.state.dbname, JSON.stringify(userobj.image), (imageBlob) => {
+                    console.log("Blob fetched.")
                     const encodedBase64 = imageBlob;
                     let imageuri = { uri: `data:${userobj.image.content_type};base64,${encodedBase64}` }
                     this.setState({
@@ -89,14 +88,14 @@ export default class Profile extends React.Component {
             docid: docId,
             dbname: dbName,
             ReplicatorID: replicatorID
-        },()=>{
+        }, () => {
 
-        // Add JSlistener to replicator
-        eventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
+            // Add JSlisteners
+            eventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
 
-    
-        // Add Live Query
-        this.setupLiveQuery();
+
+            // Add Live Query
+            this.setupLiveQuery();
         });
 
 
@@ -112,7 +111,7 @@ export default class Profile extends React.Component {
         } else if (event.errorCode == '111' && event.status == 'offline') {
             alert('There was an error when attempting to sync with remote server. You can continue to use the app in standalone mode.')
             this.syncStop(false)
-        } 
+        }
         console.log("Replicator Event :", event);
     }
 
@@ -137,7 +136,6 @@ export default class Profile extends React.Component {
         console.log("Query Event :", event);
         let response = JSON.parse(event);
         if (response.length > 0) {
-            console.log(response[0].userprofile)
             this.setUserData(response[0].userprofile)
         }
     };
@@ -154,7 +152,6 @@ export default class Profile extends React.Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = { uri: response.assets[0].uri };
-
                 let image = response.assets[0].base64;
                 let mimagetype = response.assets[0].type;
 
@@ -186,11 +183,12 @@ export default class Profile extends React.Component {
         if (this.state.imagedata) {
             let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
             if (blob.length) {
-                data.image = blob;
+                data.image = JSON.parse(blob);
             }
         }
+        data = JSON.stringify(data);
         console.log("User profile data", data);
-        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
+        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, data, this.OnSetDocSuccess,
             (error) => {
                 alert(error);
             });
@@ -278,7 +276,7 @@ export default class Profile extends React.Component {
 
                     if (uniDBSuccess == "Success") {
                         this.props.navigation.goBack();
-                    }else{
+                    } else {
                         console.log("uniDB close :" + uniDBSuccess);
                     }
 
@@ -299,32 +297,32 @@ export default class Profile extends React.Component {
 
             <SafeAreaView style={whole.container}>
 
-            <StatusBar translucent backgroundColor="transparent" barStyle='dark-content' />
+                <StatusBar translucent backgroundColor="transparent" barStyle='dark-content' />
 
-            <View style={whole.verticalLinearLayout}>
+                <View style={whole.verticalLinearLayout}>
 
 
 
-                <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
+                    <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
 
-                    <View>
-                        <Image style={whole.profileImage} source={this.state.imagepath}></Image>
+                        <View>
+                            <Image style={whole.profileImage} source={this.state.imagepath}></Image>
 
-                        <Button
-                            title="Upload Photo"
-                            color="#E62125"
-                            style={whole.btnUpload}
-                            onPress={this.selectpicture}
-                        />
+                            <Button
+                                title="Upload Photo"
+                                color="#E62125"
+                                style={whole.btnUpload}
+                                onPress={this.selectpicture}
+                            />
 
-                    </View>
+                        </View>
 
-                    <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
-                    <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
-                    <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
-                    <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
-                        <Text numberOfLines={1}>{this.state.university ? this.state.university : "Select University"}</Text><Text style={{color:'#E62125'}}>{">"}</Text>
-                    </TouchableOpacity>
+                        <TextInput placeholder="Name" keyboardType='default' onChangeText={(username) => this.setState({ name: username })} style={whole.mtextinput} value={this.state.name} />
+                        <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
+                        <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
+                        <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
+                            <Text numberOfLines={1}>{this.state.university ? this.state.university : "Select University"}</Text><Text style={{ color: '#E62125' }}>{">"}</Text>
+                        </TouchableOpacity>
                         <View style={whole.centerLayoutProfile}>
                             <Button
                                 title="Logout"

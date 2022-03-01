@@ -17,6 +17,7 @@ export default class Login extends React.Component {
         loading: false,
         username: '',
         password: '',
+        server_url: Platform.OS == "ios" ? "ws://localhost:4984/userprofile" : "ws://10.0.2.2:4984/userprofile",
         UniversitiesDBname: 'universities',
         UniversitiesDBconfig: { Directory: RNFS.DocumentDirectoryPath + "/universitydatabase" }
     }
@@ -72,30 +73,17 @@ export default class Login extends React.Component {
 
         this.startLoading();
 
-        var config;
-        if (Platform.OS == "ios") {
-            config = {
+        var config = {
                 databaseName: dbname,
                 continuous: true,
-                target: "ws://127.0.0.1:4984/userprofile",
+                target: this.state.server_url,
                 authenticator: {
                     authType: "Basic",
                     username: authUsername,
                     password: authpassword
                 },
             }
-        } else {
-            config = {
-                databaseName: dbname,
-                continuous: true,
-                target: "ws://10.0.2.2:4984/userprofile",
-                authenticator: {
-                    authType: "Basic",
-                    username: authUsername,
-                    password: authpassword
-                },
-            }
-        }
+       
         //Create Replicator
         let ReplicatorID = await CouchbaseNativeModule.createReplicator(dbname, config);
         console.log("ReplicatorID", ReplicatorID);
