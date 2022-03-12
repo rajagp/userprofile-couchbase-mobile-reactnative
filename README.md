@@ -1,19 +1,25 @@
 # Overview
 Example of a simple React Native app on Android that uses Couchbase Lite as embedded datastore for offline data storage and Sync Gateway/Couchbase Server for remote data sync.
-The app uses a reference implementation of React Native Module that exposes a subset of couchbase lite APIs.
+The app uses a [reference implementation of React Native Module](https://github.com/rajagp/couchbase-lite-react-native-module) that exposes a subset of couchbase lite APIs.
+
+LICENSE: The source code for the app is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
 
 # Folder Overview
 
 # standalone
 This version of app demonstrates basic Database and Document CRUD operations using Couhbase Lite as a standalone, embedded database within your mobile app. A document is created and stored in a "user" Couchbase Lite database.
 
+For details, refer to the README in the "standalone" folder of the repo.
 
 # query
 This version of app extends the "standalone" version of the app and demonstrates basic query and full-text-search operations against Couhbase Lite database. In addition to the "user" database, this version of the app is bundled with a second "university" database pre-seeded with documents against which queries are issued.
 
+For details, refer to the README in the "query" folder of the repo.
+
 # sync
 This version of app extends the "query" version of the app and demonstrates basic database sync functionality. The app supports bi-directional sync with a remote Couchbase Server database through a Sync Gateway.
 
+For details, refer to the README in the "sync" folder of the repo.
 
 # Getting Started
 
@@ -73,7 +79,6 @@ pod install
 * Open the Android project located inside your React Native project under directory: `/path/to/userprofile-couchbase-mobile-reactnative-android/android` using Android Studio.
 
 
-
 **Option1: Include couchbase-lite-android sdk from maven**
 
 Follow the instructions in [Couchbase Lite Android Getting Started Guides](https://docs.couchbase.com/couchbase-lite/current/android/gs-install.html) for URL to maven repository.
@@ -85,8 +90,10 @@ Follow the instructions in [Couchbase Lite Android Getting Started Guides](https
  }
 ```
 
+
 - In your 'project' level `build.gradle` file, add your library file path. 
- ```
+
+```
  buildscript {
     ...
     ext {
@@ -99,6 +106,7 @@ Follow the instructions in [Couchbase Lite Android Getting Started Guides](https
 }
 
 ```
+
 
 
 **Option2: To add couchbase-lite-android as an .aar file**
