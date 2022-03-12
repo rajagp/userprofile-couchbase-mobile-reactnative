@@ -1,8 +1,8 @@
 import React from 'react'
-import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter, View, Button, Image, TextInput } from 'react-native'
+import { SafeAreaView, Text, TouchableOpacity, StatusBar, DeviceEventEmitter, NativeEventEmitter, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
 import { launchImageLibrary } from 'react-native-image-picker'
-import CbliteAndroid from 'react-native-cblite'
+import * as Cblite from 'react-native-cblite';
 
 const options = {
     title: 'Select image',
@@ -13,7 +13,8 @@ const options = {
     includeBase64: true
 };
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
+const eventEmitter = Cblite.EventsListeners;
 
 export default class Profile extends React.Component {
 
@@ -51,11 +52,9 @@ export default class Profile extends React.Component {
                 university: userobj.university
             });
 
-
             if (userobj.image) {
-
                 CouchbaseNativeModule.getBlob(this.state.dbname, JSON.stringify(userobj.image), (imageBlob) => {
-
+                    console.log("Blob fetched.")
                     const encodedBase64 = imageBlob;
                     let imageuri = { uri: `data:${userobj.image.content_type};base64,${encodedBase64}` }
                     this.setState({
@@ -89,27 +88,24 @@ export default class Profile extends React.Component {
             docid: docId,
             dbname: dbName,
             ReplicatorID: replicatorID
+        }, () => {
+
+            // Add JSlisteners
+            eventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
+
+
+            // Add Live Query
+            this.setupLiveQuery();
         });
 
 
-        // Add JSlistener to replicator
-        DeviceEventEmitter.addListener(this.state.jsrepListner, this.OnReplicatorChanged);
-
-        // Enable Logging (null = All Domains)
-        var loggingResponse = await CouchbaseNativeModule.enableConsoleLogging(null, "DEBUG")
-
-        console.log("Enable Logging :", loggingResponse);
-
-
-        // Add Live Query
-        this.setupLiveQuery();
 
 
     }
 
 
     OnReplicatorChanged = (event) => {
-        event = JSON.parse(event);
+        //event = JSON.parse(event);
         if (event.errorCode && event.errorCode == '10401' && event.status == 'stopped') {
             alert('User is not authorized to sync with remote server. Check credentials and try again.')
         } else if (event.errorCode == '111' && event.status == 'offline') {
@@ -128,9 +124,8 @@ export default class Profile extends React.Component {
         console.log("Live Query :", queryResponse)
 
         if (queryResponse == "Success") {
-            DeviceEventEmitter.addListener(this.state.jsqueryListner, this.onQueryUpdated);
             this.setState({ syncOn: true });
-
+            eventEmitter.addListener(this.state.jsqueryListner, this.onQueryUpdated);
         } else {
             alert("There was an issue while setting up sync")
         }
@@ -157,7 +152,6 @@ export default class Profile extends React.Component {
                 console.log('User tapped custom button: ', response.customButton);
             } else {
                 const source = { uri: response.assets[0].uri };
-
                 let image = response.assets[0].base64;
                 let mimagetype = response.assets[0].type;
 
@@ -179,10 +173,10 @@ export default class Profile extends React.Component {
 
     saveProfile = () => {
 
-        var data = this.state.UserObject;
+        var data = {};
         data.type = "user";
-        data.email = this.state.email;
         data.name = this.state.name;
+        data.email = this.state.email;
         data.address = this.state.address;
         data.university = this.state.university;
 
@@ -192,8 +186,9 @@ export default class Profile extends React.Component {
                 data.image = JSON.parse(blob);
             }
         }
-        console.log("Saving user profile :", data);
-        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, JSON.stringify(data), this.OnSetDocSuccess,
+        data = JSON.stringify(data);
+        console.log("User profile data", data);
+        CouchbaseNativeModule.setDocument(this.state.dbname, this.state.docid, data, this.OnSetDocSuccess,
             (error) => {
                 alert(error);
             });
@@ -234,7 +229,7 @@ export default class Profile extends React.Component {
             } else {
 
                 //Stop Replication Listeners
-                let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationRemoveListener(this.state.dbname, this.state.ReplicatorID);
+                let ReplicatorListenerResponse = await CouchbaseNativeModule.replicationRemoveChangeListener(this.state.dbname, this.state.ReplicatorID);
                 console.log("Replicator Remove Listener :", ReplicatorListenerResponse);
 
                 if (ReplicatorListenerResponse == "Success") {
@@ -281,7 +276,7 @@ export default class Profile extends React.Component {
 
                     if (uniDBSuccess == "Success") {
                         this.props.navigation.goBack();
-                    }else{
+                    } else {
                         console.log("uniDB close :" + uniDBSuccess);
                     }
 
@@ -306,6 +301,8 @@ export default class Profile extends React.Component {
 
                 <View style={whole.verticalLinearLayout}>
 
+
+
                     <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
 
                         <View>
@@ -324,18 +321,18 @@ export default class Profile extends React.Component {
                         <TextInput placeholder="Email" editable={false} selectTextOnFocus={false} keyboardType='email-address' onChangeText={(username) => this.setState({ email: username })} style={whole.mtextinput} value={this.state.email} />
                         <TextInput placeholder="Address" keyboardType='default' onChangeText={(username) => this.setState({ address: username })} style={whole.mtextinput} value={this.state.address} />
                         <TouchableOpacity keyboardType='default' style={[whole.mselectinput, { justifyContent: 'space-between', flexDirection: 'row', alignContent: 'center', padding: 10 }]} onPress={() => { navigate("query", { ongoback: this.setuniversity }) }}>
-                            <Text>{this.state.university ? this.state.university : "Select University"}</Text><Text>{">"}</Text>
+                            <Text numberOfLines={1}>{this.state.university ? this.state.university : "Select University"}</Text><Text style={{ color: '#E62125' }}>{">"}</Text>
                         </TouchableOpacity>
                         <View style={whole.centerLayoutProfile}>
                             <Button
                                 title="Logout"
-                                color="#E62125"
+                                color="#888"
                                 style={whole.button}
                                 onPress={() => this.syncStop(true)} />
 
                             <Button
                                 title="Save"
-                                color="#888"
+                                color="#E62125"
                                 style={whole.button}
                                 onPress={this.saveProfile}
                             />

@@ -1,10 +1,10 @@
 import React from 'react';
 import { SafeAreaView, StatusBar, View, Button, Image, TextInput } from 'react-native';
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite';
+import * as Cblite from 'react-native-cblite';
 import * as RNFS from 'react-native-fs';
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 export default class Login extends React.Component {
 
     static navigationOptions = {
@@ -49,13 +49,11 @@ export default class Login extends React.Component {
 
         if ((this.state.username) && (this.state.password)) {
 
-            let _directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
+            let _directory = RNFS.CachesDirectoryPath + "/" + this.state.username;
             let dbName = 'userprofile';
-            let config = {
-                Directory: _directory,
-            }
-
+            let config = { Directory: _directory, }
             CouchbaseNativeModule.CreateOrOpenDatabase(dbName, config, this.success_callback, this.error_callback);
+        
         }
         else {
             alert("Please enter Username and Password.");
@@ -74,12 +72,12 @@ export default class Login extends React.Component {
                 <View style={whole.verticalLinearLayout}>
 
                     <View style={whole.main} >
-                        <Image style={whole.logoImage} source={require('../assets/img/logo.png')}></Image>
+                        <Image style={whole.logoImage} resizeMode='contain' source={require('../assets/img/logo.png')}></Image>
                     </View>
 
                     <View>
-                        <TextInput placeholder="Email" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
-                        <TextInput placeholder="Password" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
+                        <TextInput placeholder="Email" autoCapitalize="none" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
+                        <TextInput placeholder="Password" autoCapitalize="none" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
                     </View>
 
                     <Button

@@ -34,7 +34,7 @@ const whole = StyleSheet.create({
     width: wp('50%'),
     height: 120,
     marginTop: hp('10%'),
-    resizeMode: 'center'
+    resizeMode: 'contain'
   },
   button: {
     textAlign: 'center',
@@ -42,7 +42,7 @@ const whole = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'center',
     textTransform: 'uppercase',
-    margin: 10,
+    margin: 15,
     backgroundColor: '#E62125'
 
   },
@@ -74,24 +74,25 @@ const whole = StyleSheet.create({
   },
   listitem: {
     borderBottomColor: "#ccc",
-    width: wp("100%"),
-    padding: 10,
+    width:wp("100%"),
+    padding:10,
     borderBottomWidth: 1
-  },
+  }, 
   listMainText: {
-    color: "#000",
-    fontSize: 14
+    color:"#000",
+    fontSize:14
   },
   listDescriptionText: {
-    color: "#888",
-    fontSize: 12
+    color:"#888",
+    fontSize:12
   },
   listlinkText: {
-    color: "#ccc",
-    fontSize: 12
+    color:"#ccc",
+    fontSize:12
   },
   mselectinput: {
     height: 40,
+    flexWrap:'nowrap',
     margin: 12,
     color: '#000',
     width: 200,

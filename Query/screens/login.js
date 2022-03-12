@@ -1,11 +1,11 @@
 import React from 'react'
 import { SafeAreaView, ActivityIndicator, StatusBar, View, Button, Image, TextInput } from 'react-native'
 import { whole } from '../assets/styles/stylesheet'
-import CbliteAndroid from 'react-native-cblite'
+import * as Cblite from 'react-native-cblite';
 import * as RNFS from 'react-native-fs'
 import { zip, unzip, unzipAssets, subscribe } from 'react-native-zip-archive'
 
-const CouchbaseNativeModule = CbliteAndroid;
+const CouchbaseNativeModule = Cblite;
 export default class Login extends React.Component {
 
     static navigationOptions = {
@@ -26,7 +26,7 @@ export default class Login extends React.Component {
 
         if ((this.state.username) && (this.state.password)) {
 
-            let directory = RNFS.DocumentDirectoryPath + "/" + this.state.username;
+            let directory = RNFS.CachesDirectoryPath + "/" + this.state.username;
             let dbName = 'userprofile';
             let config = {
                 Directory: directory,
@@ -41,7 +41,7 @@ export default class Login extends React.Component {
 
     userdb_success_callback = (SuccessResponse) => {
 
-        console.log("User DB Open", SuccessResponse)
+        console.log("User DB Open:", SuccessResponse)
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
             this.checkCopyDatabase();
         }
@@ -63,6 +63,7 @@ export default class Login extends React.Component {
 
         var dbexists = CouchbaseNativeModule.databaseExists(newdbName, newconfig) == "Database already exists";
 
+        console.log("Universities db exists:",dbexists)
 
         if (dbexists) {
 
@@ -70,6 +71,21 @@ export default class Login extends React.Component {
 
         }
         else {
+
+
+            if (Platform.OS == 'ios') {
+                  //copy from assets to documents folder to perform copydatabase
+            let assetsDBFileName = "universities.zip";
+            let dbTemp = `${RNFS.DocumentDirectoryPath}/temp/`;
+            let zipfile =`${RNFS.MainBundlePath}/${assetsDBFileName}`;
+            console.log(zipfile);
+           
+            await unzip(zipfile, dbTemp);
+            console.log("Db copied from assets");
+            //copy database
+            this.copyDatabase(dbTemp, newdbName, newconfig);
+            }
+            else{
 
             //copy from assets to documents folder to perform copydatabase
             let assetsDBFileName = "universities.zip";
@@ -82,6 +98,8 @@ export default class Login extends React.Component {
             console.log("Db copied from assets");
             //copy database
             this.copyDatabase(dbTemp, newdbName, newconfig);
+
+            }
 
         }
 
@@ -113,14 +131,14 @@ export default class Login extends React.Component {
     }
 
     universities_dbcreated_success_callback = (SuccessResponse) => {
-        console.log("Universities database opened", SuccessResponse)
+        console.log("Open universities database status:", SuccessResponse)
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
             let indexExpressions = ['name', 'location'];
             let indexName = "nameLocationIndex";
 
             var indexResponse = CouchbaseNativeModule.createValueIndex(this.state.dbname, indexName, indexExpressions);
-            console.log("Create index", indexResponse)
+            console.log("create index:", indexResponse)
             if (indexResponse == "Success") {
                 this.dismissLoading();
                 this.props.navigation.navigate('profilescreen', { username: this.state.username });
@@ -136,6 +154,7 @@ export default class Login extends React.Component {
 
     dbexists_success_callback = (SuccessResponse) => {
 
+        console.log("Open universities db:",SuccessResponse)
 
         if (SuccessResponse == "Success" || SuccessResponse == "Database already exists") {
 
@@ -183,8 +202,8 @@ export default class Login extends React.Component {
                     </View>
 
                     <View>
-                        <TextInput placeholder="Email" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
-                        <TextInput placeholder="Password" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
+                        <TextInput placeholder="Email" autoCapitalize="none" keyboardType='email-address' onChangeText={(username) => this.setState({ username })} style={whole.mtextinput} value={this.state.username} />
+                        <TextInput placeholder="Password" autoCapitalize="none" onChangeText={(password) => this.setState({ password })} value={this.state.password} style={whole.mtextinput} secureTextEntry={true} />
                     </View>
 
                     <Button

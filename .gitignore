@@ -1,4 +1,3 @@
-
 *.DS_Store
 Standalone/node_modules
 Standalone/android/.idea/
@@ -6,8 +5,13 @@ Standalone/android/app/libs/couchbase-lite-android-ee-3.0.0.aar
 Standalone/android/app/build
 Standalone/android/.gradle/
 Standalone/android/local.properties
+Standalone/package.json
+Standalone/package-lock.json
+Standalone/ios/pods/
+Standalone/yarn-error.log
+Standalone/yarn.lock
 Query/node_modules
-Query/android/app/libs/couchbase-lite-android-ee-3.0.0.aar
+Query/android/app/libs/couchbase-lite-android-ee-3.00.aar
 Query/android/app/build
 Query/android/.gradle/
 Query/android/.idea/
@@ -20,3 +24,12 @@ Sync/android/.idea/
 Sync/android/local.properties
 Sync/yarn-error.log
 *.lock
+Standalone/package.json
+Standalone/yarn.lock
+Standalone/ios/userprofiledemo.xcworkspace
+Query/ios/userprofiledemo.xcworkspace
+Query/ios/Pods/
+Query/android/app/src/debug/
+Sync/ios/Pods/
+Sync/ios/userprofiledemo.xcworkspace
+Sync/package-lock.json

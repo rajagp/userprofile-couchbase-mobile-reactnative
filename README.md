@@ -69,6 +69,13 @@ Couchbase Lite can be downloaded from Couchbase [downloads](https://www.couchbas
 
 We discuss the steps to add the Couchbase Lite framework dependency depending on how you downloaded the framework. 
 
+* For iOS you need to install pods
+```
+cd  /ios
+pod install
+
+```
+
 * Open the Android project located inside your React Native project under directory: `/path/to/userprofile-couchbase-mobile-reactnative-android/android` using Android Studio.
 
 
@@ -97,7 +104,10 @@ Follow the instructions in [Couchbase Lite Android Getting Started Guides](https
         }
     ...
 }
+
 ```
+
+
 
 **Option2: To add couchbase-lite-android as an .aar file**
 
@@ -153,9 +163,11 @@ allprojects {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation files('com.couchbase.couchbase-lite-android-ee-3.0.0')
-
 }
 ```
+
+
+
 ##  Running the App
 Build and run the app per instructions in [Getting Started Guide]("https://reactnative.dev/docs/environment-setup"). You can run the app direcly from Android Studio or from command line.
 
