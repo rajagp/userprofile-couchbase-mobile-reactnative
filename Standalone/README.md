@@ -5,9 +5,14 @@ The app uses a reference implementation of a React Ntive plugin that exports a s
 
 **LICENSE**: The source code for the app and React Native plugin is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
 
+# Build
+To build the app for specific platform, follow the instructions in the top level README of the repo.
+
 # App Functionality
 
 This app demonstrates basic Database and Document CRUD operations using Couchbase Lite as a standalone, embedded database within your mobile app. A document is created and stored in a "user" Couchbase Lite database.
+
+Refer to "**ios**" folder for iOS version of app and the "**android**" folder for Android version of the app
 
 # Data Model
 Couchbase Lite is a JSON Document Store. A Document is a logical collection of named fields and values.The values are any valid JSON types. In addition to the standard JSON types, Couchbase Lite supports Date and Blob data types. While it is not required or enforced, it is a recommended practice to include a "type" property that can serve as a namespace for related documents.
@@ -26,24 +31,3 @@ An example of a document would be
 }
 ```
 The profilePic holds metadata of the binary image data associated with the document
-
-# Try it Out
-* Launch the app
-* Log into the app with any email Id and password. Use the values "demo@example.com" and "password" for user Id and password fields respectively. 
-* If this is the first time that the user is signing in, a new Couchbase Lite database will be created. On subsequent login, the user’s existing database will be opened.
-* Enter a "name" for the user and address and select a profile image and Tap "Done"
-* Confirm that you see an alert message "Succesfully Updated Profile". The first time, you update the profile screen, the userprofile document will be created in the database
-
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/11/reactnative-standalone-1.gif)
-
-* Now tap on the profile image and select an image from the Photo Album. Tap "Done".
-* Confirm that you see an alert message "Succesfully Updated Profile".
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/11/reactnative-standalone-2.gif)
-
-* Log off from app by tapping "Log out" icon buttoin top navigation bar
-* Log back into the app with the same user email Id and password that you used earlier. In my example, I used "demo@example.com" and "password". So I will log in with those credentials again.
-* Confirm that you see the profile screen with the name and image values that you set earlier. The userprofile document that was created and saved earlier is loaded from the database.
-
-![](https://blog.couchbase.com/wp-content/uploads/2021/11/reactnative-standalone-3.gif)

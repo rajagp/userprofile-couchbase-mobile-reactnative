@@ -4,9 +4,13 @@ The app uses a reference implementation of a React Native plugin that exports a 
 
 **LICENSE**: The source code for the app and React Native plugin is Apache-licensed, as specified in LICENSE. However, the usage of Couchbase Lite will be guided by the terms and conditions specified in Couchbase's Enterprise or Community License agreements.
 
+# Build
+To build the app for specific platform, follow the instructions in the top level README of the repo.
+
 # App Functionality
 
 This version of app extends the "query" version of the app and demonstrates basic database sync functionality. The app supports bi-directional sync with a remote Couchbase Server database through a [Sync Gateway](https://docs.couchbase.com/couchbase-lite/3.0/android/replication.html).
+
 
 Couchbase Sync Gateway is a key component of the Couchbase Mobile stack. It is an Internet-facing synchronization mechanism that securely syncs data across devices as well as between devices and the cloud. 
 
@@ -21,6 +25,9 @@ This app does the following
 * Allows users to log in and create or update his/her user profile information. The user profile view is automatically updated everytime the profile information changes in the underlying database
 
 * The user profile information is synced with a remote Sync Gateway which then syncs it to other devices (subject to access control and routing configurations specified in the sync function)
+
+
+Refer to "**ios**" folder for iOS version of app and the "**android**" folder for Android version of the app.
 
 ![](https://blog.couchbase.com/wp-content/uploads/2021/11/reactnative-sync-1.gif)
 
