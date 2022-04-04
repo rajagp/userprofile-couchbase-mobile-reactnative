@@ -49,7 +49,8 @@ export default class Profile extends React.Component {
                 UserObject: userobj,
                 name: userobj.name,
                 address: userobj.address,
-                university: userobj.university
+                university: userobj.university,
+                userobjimage: userobj.image
             });
 
             if (userobj.image) {
@@ -60,7 +61,7 @@ export default class Profile extends React.Component {
                     this.setState({
                         imagepath: imageuri,
                     });
-
+                    
                 }, (errorResponse) => {
                     alert("There was a problem while fetching profile image. Details : " + errorResponse);
                 });
@@ -179,6 +180,7 @@ export default class Profile extends React.Component {
         data.email = this.state.email;
         data.address = this.state.address;
         data.university = this.state.university;
+        data.image = this.state.userobjimage;
 
         if (this.state.imagedata) {
             let blob = CouchbaseNativeModule.setBlob(this.state.dbname, this.state.imagetype, this.state.imagedata);
@@ -197,7 +199,9 @@ export default class Profile extends React.Component {
 
     OnSetDocSuccess = (result) => {
 
+
         if (result == 'Success') {
+            this.setState({imagedata: null});
             alert('User Profile Updated');
         }
         else {
