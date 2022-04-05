@@ -10,6 +10,7 @@ Standalone/package-lock.json
 Standalone/ios/Pods/
 Standalone/yarn-error.log
 Standalone/yarn.lock
+Standalone/package.json
 Standalone/ios/userprofiledemo.xcworkspace
 Standalone/android/app/src/debug/
 Query/node_modules
@@ -22,6 +23,7 @@ Query/package-lock.json
 Query/ios/Pods/
 Query/yarn-error.log
 Query/yarn.lock
+Query/package.json
 Query/ios/userprofiledemo.xcworkspace
 Query/android/app/src/debug/
 Sync/node_modules
@@ -34,5 +36,7 @@ Sync/package-lock.json
 Sync/ios/Pods/
 Sync/yarn-error.log
 Sync/yarn.lock
+Sync/package.json
 Sync/ios/userprofiledemo.xcworkspace
 Sync/android/app/src/debug/
+
